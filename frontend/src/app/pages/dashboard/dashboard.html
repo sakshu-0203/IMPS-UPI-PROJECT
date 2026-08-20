@@ -1,0 +1,373 @@
+<div class="dashboard-page">
+
+  <!-- HEADER -->
+
+  <div class="dashboard-header">
+
+    <div>
+
+      <h1>Dashboard</h1>
+
+      <p>
+        IMPS Operations Overview
+      </p>
+
+    </div>
+
+
+    <button
+      class="refresh-btn"
+      type="button"
+      (click)="refreshDashboard()">
+
+      <i class="bi bi-arrow-clockwise"></i>
+
+      Refresh
+
+    </button>
+
+  </div>
+
+
+  <!-- ERROR -->
+
+  <div
+    class="error-message"
+    *ngIf="errorMessage">
+
+    {{ errorMessage }}
+
+  </div>
+
+
+  <!-- LOADING -->
+
+  <div
+    class="loading"
+    *ngIf="loading">
+
+    Loading dashboard...
+
+  </div>
+
+
+  <!-- DASHBOARD CONTENT -->
+
+  <ng-container *ngIf="!loading">
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="summary-grid">
+
+
+      <!-- TOTAL -->
+
+      <div class="summary-card">
+
+        <div class="card-icon">
+
+          <i class="bi bi-arrow-left-right"></i>
+
+        </div>
+
+        <div>
+
+          <span class="card-label">
+            Total Transactions
+          </span>
+
+          <h2>
+            {{ totalTransactions }}
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <!-- SUCCESS -->
+
+      <div class="summary-card success-card">
+
+        <div class="card-icon">
+
+          <i class="bi bi-check-circle"></i>
+
+        </div>
+
+        <div>
+
+          <span class="card-label">
+            Successful
+          </span>
+
+          <h2>
+            {{ successfulTransactions }}
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <!-- PENDING -->
+
+      <div class="summary-card pending-card">
+
+        <div class="card-icon">
+
+          <i class="bi bi-clock-history"></i>
+
+        </div>
+
+        <div>
+
+          <span class="card-label">
+            Pending
+          </span>
+
+          <h2>
+            {{ pendingTransactions }}
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <!-- FAILED -->
+
+      <div class="summary-card failed-card">
+
+        <div class="card-icon">
+
+          <i class="bi bi-exclamation-circle"></i>
+
+        </div>
+
+        <div>
+
+          <span class="card-label">
+            Failed
+          </span>
+
+          <h2>
+            {{ failedTransactions }}
+          </h2>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+    <!-- TOTAL AMOUNT -->
+
+    <div class="amount-card">
+
+      <div>
+
+        <span>
+          Total Transaction Amount
+        </span>
+
+        <h2>
+          ₹{{ formatAmount(totalAmount) }}
+        </h2>
+
+      </div>
+
+
+      <i class="bi bi-currency-rupee"></i>
+
+    </div>
+
+
+    <!-- RECENT TRANSACTIONS -->
+
+    <div class="transactions-card">
+
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>
+            Recent Transactions
+          </h2>
+
+          <p>
+            Latest IMPS transaction activity
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="table-wrapper"
+        *ngIf="
+          recentTransactions.length > 0
+        ">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Transaction ID
+              </th>
+
+              <th>
+                RRN
+              </th>
+
+              <th>
+                Type
+              </th>
+
+              <th>
+                Direction
+              </th>
+
+              <th>
+                Amount
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th>
+                Date
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            <tr
+              *ngFor="
+                let transaction
+                of recentTransactions
+              ">
+
+
+              <td class="transaction-id">
+
+                {{ transaction.transaction_id }}
+
+              </td>
+
+
+              <td>
+
+                {{ transaction.rrn || '-' }}
+
+              </td>
+
+
+              <td>
+
+                {{
+                  transaction.transaction_type
+                  || '-'
+                }}
+
+              </td>
+
+
+              <td>
+
+                {{
+                  transaction.direction
+                  || '-'
+                }}
+
+              </td>
+
+
+              <td class="amount">
+
+                ₹{{
+                  formatAmount(
+                    transaction.amount
+                  )
+                }}
+
+              </td>
+
+
+              <td>
+
+                <span
+                  class="status"
+                  [class.success]="
+                    transaction.transaction_status
+                    === 'SUCCESS'
+                  "
+                  [class.pending]="
+                    transaction.transaction_status
+                    === 'PENDING'
+                  "
+                  [class.failed]="
+                    transaction.transaction_status
+                    === 'FAILED'
+                  ">
+
+                  {{
+                    transaction.transaction_status
+                  }}
+
+                </span>
+
+              </td>
+
+
+              <td>
+
+                {{
+                  transaction.transaction_date
+                  | date:'dd-MM-yyyy HH:mm'
+                }}
+
+              </td>
+
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <!-- NO DATA -->
+
+      <div
+        class="no-data"
+        *ngIf="
+          recentTransactions.length === 0
+        ">
+
+        No transactions available.
+
+      </div>
+
+
+    </div>
+
+
+  </ng-container>
+
+</div>

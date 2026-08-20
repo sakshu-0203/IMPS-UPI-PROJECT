@@ -1,0 +1,484 @@
+<div class="login-page">
+
+  <!-- ================= LEFT PANEL ================= -->
+
+  <section class="left-panel">
+
+    <div class="left-content">
+
+      <!-- BRAND -->
+
+      <div class="brand">
+
+        <div class="brand-logo">
+          <i class="bi bi-bank2"></i>
+        </div>
+
+        <div class="brand-text">
+
+          <h1>Allianza IMPS</h1>
+
+          <p>Operations platform for Progressive Bank</p>
+
+        </div>
+
+      </div>
+
+
+      <!-- MAIN CONTENT -->
+
+      <div class="left-main">
+
+        <h2>
+          Immediate Payment Service
+          <br>
+          operations, controlled end to end.
+        </h2>
+
+        <p class="description">
+
+          Initiate, approve, monitor and reconcile IMPS
+          activity with maker-checker discipline,
+          branch-level limits and a complete audit trail.
+
+        </p>
+
+
+        <!-- FEATURES -->
+
+        <div class="features">
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i class="bi bi-shield-check"></i>
+            </div>
+
+            <div>
+              <strong>Secure Operations</strong>
+
+              <span>
+                Role-based access and controlled banking operations.
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i class="bi bi-person-check"></i>
+            </div>
+
+            <div>
+              <strong>Maker-Checker Workflow</strong>
+
+              <span>
+                Controlled transaction initiation and approval.
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i class="bi bi-arrow-left-right"></i>
+            </div>
+
+            <div>
+              <strong>Inbound & Outbound Monitoring</strong>
+
+              <span>
+                Monitor transaction movement across banking channels.
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+
+            <div>
+              <strong>Settlement & Reconciliation</strong>
+
+              <span>
+                Track settlement activity and reconciliation status.
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="feature-item">
+
+            <div class="feature-icon">
+              <i class="bi bi-journal-check"></i>
+            </div>
+
+            <div>
+              <strong>Complete Audit Trail</strong>
+
+              <span>
+                Maintain traceable records of operational activity.
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- LEFT FOOTER -->
+
+      <div class="left-footer">
+
+        <i class="bi bi-lock-fill"></i>
+
+        <span>
+          Authorized users only. All activities are monitored
+          and recorded for security and audit purposes.
+        </span>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================= RIGHT PANEL ================= -->
+
+  <section class="right-panel">
+
+    <div class="login-container">
+
+
+      <!-- TITLE -->
+
+      <div class="login-header">
+
+        <div>
+
+          <h2>Operations Sign-in</h2>
+
+          <p>
+            Progressive Bank • IMPS Operations
+          </p>
+
+        </div>
+
+     
+      </div>
+
+
+      <!-- LOGIN CARD -->
+
+      <div class="login-card">
+
+        <form (ngSubmit)="login()">
+
+
+          <!-- ORGANISATION -->
+
+          <div class="form-group">
+
+            <label>
+              Organisation ID
+              <span>*</span>
+            </label>
+
+            <input
+              type="text"
+              name="organisationId"
+              [(ngModel)]="organisationId"
+              required
+              maxlength="100"
+              placeholder="Enter organisation ID"
+            />
+            @if (fieldErrors['organisationId']) { <small class="field-error">{{ fieldErrors['organisationId'] }}</small> }
+
+          </div>
+
+
+          <!-- EMPLOYEE ID -->
+
+          <div class="form-group">
+
+            <label>
+              Employee ID or Username
+              <span>*</span>
+            </label>
+
+            <input
+              type="text"
+              name="employeeId"
+              [(ngModel)]="employeeId"
+              required
+              maxlength="50"
+              placeholder="Enter employee ID"
+            />
+            @if (fieldErrors['employeeId']) { <small class="field-error">{{ fieldErrors['employeeId'] }}</small> }
+
+          </div>
+
+
+          <!-- PASSWORD -->
+
+          <div class="form-group">
+
+            <label>
+              Password
+              <span>*</span>
+            </label>
+
+            <div class="password-field">
+
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                name="password"
+                [(ngModel)]="password"
+                required
+                minlength="6"
+                maxlength="100"
+                placeholder="Enter password"
+              />
+
+              <button
+                type="button"
+                class="show-button"
+                (click)="togglePassword()">
+
+                {{ showPassword ? 'Hide' : 'Show' }}
+
+              </button>
+
+            </div>
+            @if (fieldErrors['password']) { <small class="field-error">{{ fieldErrors['password'] }}</small> }
+
+          </div>
+
+
+          <!-- BRANCH + ROLE -->
+
+          <div class="two-column">
+
+
+            <div class="form-group">
+
+              <label>
+                Branch Code
+                <span>*</span>
+              </label>
+
+              <input
+                type="text"
+                name="branchCode"
+                [(ngModel)]="branchCode"
+                required
+                maxlength="20"
+                placeholder="BR001"
+              />
+              @if (fieldErrors['branchCode']) { <small class="field-error">{{ fieldErrors['branchCode'] }}</small> }
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                Role
+              </label>
+
+              <select
+                name="role"
+                [(ngModel)]="role">
+
+                <option value="Maker">
+                  Maker
+                </option>
+
+                <option value="Checker">
+                  Checker
+                </option>
+
+                <option value="Admin">
+                  Admin
+                </option>
+
+                <option value="Viewer">
+                  Viewer
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+
+          <!-- CAPTCHA -->
+
+          <div class="captcha-section">
+
+            <div class="captcha-box">
+
+              {{ captchaText }}
+
+              <button
+                type="button"
+                class="refresh-captcha"
+                (click)="refreshCaptcha()">
+
+                <i class="bi bi-arrow-clockwise"></i>
+
+              </button>
+
+            </div>
+
+
+            <div class="captcha-input">
+
+              <label>
+                Enter captcha
+              </label>
+
+              <input
+                type="text"
+                name="captcha"
+                [(ngModel)]="captcha"
+                required
+                maxlength="6"
+                placeholder="Enter captcha"
+              />
+              @if (fieldErrors['captcha']) { <small class="field-error">{{ fieldErrors['captcha'] }}</small> }
+
+            </div>
+
+          </div>
+
+
+          <!-- REMEMBER -->
+
+          <div class="remember-row">
+
+            <label>
+
+              <input
+                type="checkbox"
+                name="rememberOrganisation"
+                [(ngModel)]="rememberOrganisation"
+              />
+
+              <span>
+                Remember organisation
+              </span>
+
+            </label>
+
+          </div>
+
+
+          <!-- ERROR -->
+
+          @if (errorMessage) {
+
+            <div class="error-message">
+
+              <i class="bi bi-exclamation-circle"></i>
+
+              <span>
+                {{ errorMessage }}
+              </span>
+
+            </div>
+
+          }
+
+
+          <!-- SIGN IN -->
+
+          <button
+            type="submit"
+            class="signin-button"
+            [disabled]="loading">
+
+            <span>
+              {{ loading ? 'Signing in...' : 'Sign in' }}
+            </span>
+
+            <i class="bi bi-arrow-right"></i>
+
+          </button>
+
+
+          <!-- ACTION LINKS -->
+
+          <div class="action-links">
+
+            <button
+              type="button"
+              (click)="forgotPassword()">
+
+              Forgot password
+
+            </button>
+
+            <button
+              type="button"
+              (click)="unlockAccount()">
+
+              Unlock account
+
+            </button>
+
+            <button
+              type="button"
+              (click)="contactAdministrator()">
+
+              Contact administrator
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <!-- SECURITY INFORMATION -->
+
+      <div class="security-info">
+
+        <i class="bi bi-shield-lock"></i>
+
+        <span>
+          Secure session • Your credentials are protected
+          and transmitted through the authorized banking system.
+        </span>
+
+      </div>
+
+
+      <div class="last-login">
+
+        Last successful login:
+        <strong>No previous session</strong>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+</div>

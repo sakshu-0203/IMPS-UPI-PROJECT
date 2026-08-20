@@ -1,0 +1,285 @@
+<div class="approvals-page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+
+    <div>
+      <h1>Pending Approvals</h1>
+
+      <p>
+        Review and manage pending IMPS and UPI transactions
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="refresh-btn"
+      (click)="loadPendingApprovals()"
+      [disabled]="loading">
+
+      <i
+        class="bi bi-arrow-clockwise"
+        [class.spin]="loading">
+      </i>
+
+      {{ loading ? 'Refreshing...' : 'Refresh' }}
+
+    </button>
+
+  </div>
+
+
+  <!-- ERROR -->
+  @if (errorMessage) {
+
+    <div class="message error-message">
+
+      <i class="bi bi-exclamation-circle"></i>
+
+      <span>
+        {{ errorMessage }}
+      </span>
+
+    </div>
+
+  }
+
+
+  <!-- SUCCESS -->
+  @if (successMessage) {
+
+    <div class="message success-message">
+
+      <i class="bi bi-check-circle"></i>
+
+      <span>
+        {{ successMessage }}
+      </span>
+
+    </div>
+
+  }
+
+
+  <!-- INITIAL LOADING -->
+  @if (loading && approvals.length === 0) {
+
+    <div class="loading">
+
+      <i class="bi bi-hourglass-split"></i>
+
+      <p>
+        Loading pending approvals...
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- DATA TABLE -->
+  @if (approvals.length > 0) {
+
+    <div class="table-card">
+
+      <div class="table-header">
+
+        <div>
+          <h2>Pending Transactions</h2>
+
+          <p>
+            {{ approvals.length }}
+            pending transaction(s)
+          </p>
+        </div>
+
+        @if (loading) {
+
+          <span class="refreshing-text">
+            Refreshing data...
+          </span>
+
+        }
+
+      </div>
+
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Transaction ID</th>
+              <th>RRN</th>
+              <th>Type</th>
+              <th>Beneficiary</th>
+              <th>Account</th>
+              <th>Amount</th>
+              <th>Requested By</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            @for (
+              approval of approvals;
+              track approval.transaction_id
+            ) {
+
+              <tr>
+
+                <td>
+                  <strong class="transaction-id">
+                    {{ approval.transaction_id }}
+                  </strong>
+                </td>
+
+
+                <td>
+                  {{ approval.rrn }}
+                </td>
+
+
+                <td>
+
+                  <span class="transaction-type">
+
+                    <i
+                      class="bi"
+                      [class.bi-lightning-charge]="
+                        approval.transaction_type === 'IMPS'
+                      "
+                      [class.bi-phone]="
+                        approval.transaction_type === 'UPI'
+                      ">
+                    </i>
+
+                    {{ approval.transaction_type }}
+
+                  </span>
+
+                </td>
+
+
+                <td>
+                  {{ approval.beneficiary_name }}
+                </td>
+
+
+                <td>
+                  {{ approval.beneficiary_account }}
+                </td>
+
+
+                <td>
+
+                  <strong class="amount">
+                    ₹{{ approval.amount }}
+                  </strong>
+
+                </td>
+
+
+                <td>
+                  {{ approval.requested_by }}
+                </td>
+
+
+                <td>
+
+                  <span class="status pending">
+
+                    <i class="bi bi-clock"></i>
+
+                    {{ approval.status }}
+
+                  </span>
+
+                </td>
+
+
+                <td>
+
+                  <div class="actions">
+
+                    <button
+                      type="button"
+                      class="approve-btn"
+                      (click)="approveTransaction(approval)">
+
+                      <i class="bi bi-check-lg"></i>
+
+                      Approve
+
+                    </button>
+
+
+                    <button
+                      type="button"
+                      class="reject-btn"
+                      (click)="rejectTransaction(approval)">
+
+                      <i class="bi bi-x-lg"></i>
+
+                      Reject
+
+                    </button>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- EMPTY -->
+  @if (
+    !loading &&
+    approvals.length === 0 &&
+    !errorMessage
+  ) {
+
+    <div class="empty-state">
+
+      <i class="bi bi-check-circle"></i>
+
+      <h3>No Pending Approvals</h3>
+
+      <p>
+        There are currently no transactions waiting for approval.
+      </p>
+
+      <button
+        type="button"
+        class="refresh-btn"
+        (click)="loadPendingApprovals()">
+
+        <i class="bi bi-arrow-clockwise"></i>
+
+        Refresh
+
+      </button>
+
+    </div>
+
+  }
+
+</div>

@@ -1,0 +1,361 @@
+<aside class="sidebar">
+
+  <!-- BRAND -->
+
+  <div class="sidebar-brand">
+
+    <div class="brand-logo">
+      A
+    </div>
+
+    <div class="brand-text">
+      <strong>Allianza</strong>
+      <span>IMPS Operations</span>
+    </div>
+
+  </div>
+
+
+  <!-- MENU -->
+
+  <nav class="sidebar-menu">
+
+    <!-- DASHBOARD -->
+
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="menu-item">
+
+      <i class="bi bi-speedometer2"></i>
+
+      <span>Dashboard</span>
+
+    </a>
+
+
+    <!-- IMPS OPERATIONS -->
+
+    <div class="menu-title">
+      IMPS OPERATIONS
+    </div>
+
+
+    <a
+      routerLink="/transactions/new-transfer"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-arrow-left-right"></i>
+
+      <span>New Transfer</span>
+
+    </a>
+
+
+    <a
+      routerLink="/transactions/bulk-upload"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-upload"></i>
+
+      <span>Bulk Upload</span>
+
+    </a>
+
+
+   <a
+  routerLink="/approvals/pending-approval"
+  routerLinkActive="active"
+  class="menu-item">
+
+  <i class="bi bi-clock-history"></i>
+
+  <span>Pending Approval</span>
+
+</a>
+
+    <a
+      routerLink="/transactions/search"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-search"></i>
+
+      <span>Transaction Search</span>
+
+    </a>
+
+
+    <a
+      routerLink="/transactions/inbound"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-arrow-down-circle"></i>
+
+      <span>Inbound</span>
+
+    </a>
+
+
+    <a
+      routerLink="/transactions/outbound"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-arrow-up-circle"></i>
+
+      <span>Outbound</span>
+
+    </a>
+
+
+    <a
+      routerLink="/transactions/reversal"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-arrow-repeat"></i>
+
+      <span>Reversal</span>
+
+    </a>
+
+
+    <a
+      routerLink="/transactions/exception-queue"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-exclamation-circle"></i>
+
+      <span>Exception Queue</span>
+
+    </a>
+
+
+    <!-- ACCOUNTS -->
+
+    <div class="menu-title">
+      ACCOUNTS
+    </div>
+
+
+    <a
+      routerLink="/accounts/balance-enquiry"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-wallet2"></i>
+
+      <span>Balance Enquiry</span>
+
+    </a>
+
+
+    <a
+      routerLink="/accounts/mini-statement"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-file-earmark-text"></i>
+
+      <span>Mini Statement</span>
+
+    </a>
+
+
+    <a
+      routerLink="/accounts/account-statement"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-journal-text"></i>
+
+      <span>Account Statement</span>
+
+    </a>
+
+
+    <!-- BENEFICIARY -->
+
+    <div class="menu-title">
+      BENEFICIARY
+    </div>
+
+
+    <a
+      routerLink="/beneficiary/list"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-people"></i>
+
+      <span>Beneficiary List</span>
+
+    </a>
+
+
+    <a
+      routerLink="/beneficiary/add"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-person-plus"></i>
+
+      <span>Add Beneficiary</span>
+
+    </a>
+
+
+    <!-- REPORTS -->
+
+    <div class="menu-title">
+      REPORTS
+    </div>
+
+
+    <a
+      routerLink="/reports/transactions"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-bar-chart"></i>
+
+      <span>Transaction Reports</span>
+
+    </a>
+
+
+    <a
+      routerLink="/reports/settlement"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-bank"></i>
+
+      <span>Settlement Reports</span>
+
+    </a>
+
+
+    <a
+      routerLink="/reports/reconciliation"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-arrow-repeat"></i>
+
+      <span>Reconciliation</span>
+
+    </a>
+
+    <!-- MONITORING -->
+
+    <div class="menu-title">
+      MONITORING
+    </div>
+
+
+    <a
+      routerLink="/monitoring/api-logs"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-terminal"></i>
+
+      <span>API Logs</span>
+
+    </a>
+
+
+    <a
+      routerLink="/monitoring/system-health"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-heart-pulse"></i>
+
+      <span>System Health</span>
+
+    </a>
+
+
+    <a
+      routerLink="/monitoring/alerts"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-bell"></i>
+
+      <span>Alerts</span>
+
+    </a>
+
+
+    <!-- SETTINGS -->
+
+    <div class="menu-title">
+      SETTINGS
+    </div>
+
+
+    <a
+      routerLink="/settings/users"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-person-gear"></i>
+
+      <span>User Management</span>
+
+    </a>
+
+
+    <a
+      routerLink="/settings/roles"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-shield-check"></i>
+
+      <span>Role Management</span>
+
+    </a>
+
+
+    <a
+      routerLink="/settings/system"
+      routerLinkActive="active"
+      class="menu-item">
+
+      <i class="bi bi-gear"></i>
+
+      <span>System Settings</span>
+
+    </a>
+
+  </nav>
+
+
+  <!-- SIDEBAR BOTTOM -->
+
+  <div class="sidebar-bottom">
+
+    <div class="connection-status">
+
+      <span class="connection-dot"></span>
+
+      <div>
+        <strong>Connected</strong>
+        <small>Banking Network</small>
+      </div>
+
+    </div>
+
+  </div>
+
+</aside>

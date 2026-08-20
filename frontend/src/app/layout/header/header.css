@@ -1,0 +1,256 @@
+.top-header {
+  height: 70px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e5e9f0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 0 28px;
+
+  box-sizing: border-box;
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 900;
+}
+
+
+/* LEFT */
+
+.header-left {
+  min-width: 210px;
+}
+
+.header-brand {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 8px;
+}
+
+.brand-name {
+  color: #172b4d;
+
+  font-size: 19px;
+
+  font-weight: 700;
+}
+
+.brand-module {
+  color: #718096;
+
+  font-size: 12px;
+}
+
+
+/* SEARCH */
+
+.header-search {
+  width: 360px;
+
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  background: #f6f8fb;
+
+  border: 1px solid #e1e7ef;
+
+  border-radius: 7px;
+
+  padding: 0 12px;
+
+  box-sizing: border-box;
+}
+
+.header-search i {
+  color: #8291a5;
+
+  font-size: 14px;
+}
+
+.header-search input {
+  width: 100%;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  color: #334155;
+
+  font-size: 12px;
+}
+
+.header-search input::placeholder {
+  color: #94a3b8;
+}
+
+
+/* RIGHT */
+
+.header-right {
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+
+  min-width: 250px;
+
+  justify-content: flex-end;
+}
+
+.system-status {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  color: #198754;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 7px;
+
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #198754;
+}
+
+.header-divider {
+  height: 28px;
+
+  width: 1px;
+
+  background: #e2e8f0;
+}
+
+.user-section {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  cursor: pointer;
+}
+
+.user-avatar {
+  width: 34px;
+
+  height: 34px;
+
+  border-radius: 50%;
+
+  background: #e8f1fa;
+
+  color: #1769aa;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+.user-details {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.user-details strong {
+  color: #334155;
+
+  font-size: 12px;
+}
+
+.user-details span {
+  color: #94a3b8;
+
+  font-size: 10px;
+}
+
+.user-section > i {
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+
+  .header-search {
+    width: 260px;
+  }
+
+  .system-status {
+    display: none;
+  }
+
+}
+
+@media (max-width: 700px) {
+
+  .header-left {
+    min-width: auto;
+  }
+
+  .brand-module {
+    display: none;
+  }
+
+  .header-search {
+    display: none;
+  }
+
+}
+
+.user-menu-wrapper { position: relative; }
+.user-section { border: 0; background: transparent; padding: 4px; }
+.user-section:hover { background: #f7f9fc; border-radius: 8px; }
+.user-dropdown { position: absolute; right: 0; top: calc(100% + 10px); width: 230px; background: #fff; border: 1px solid #e3e8ef; border-radius: 10px; box-shadow: 0 14px 35px rgba(15, 23, 42, .14); padding: 10px; z-index: 1100; }
+.user-dropdown-info { padding: 8px 10px 10px; border-bottom: 1px solid #eef2f6; display: flex; flex-direction: column; gap: 3px; }
+.user-dropdown-info strong { font-size: 13px; color: #1e293b; }
+.user-dropdown-info span { font-size: 11px; color: #64748b; }
+.logout-menu-button { width: 100%; border: 0; background: transparent; color: #b42318; text-align: left; padding: 10px; margin-top: 4px; border-radius: 7px; cursor: pointer; font-size: 12px; }
+.logout-menu-button:hover { background: #fff1f0; }
+.logout-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, .42); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+.logout-modal { width: min(420px, 100%); background: #fff; border-radius: 14px; padding: 28px; box-shadow: 0 24px 70px rgba(15, 23, 42, .25); text-align: center; }
+.logout-icon { width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 14px; background: #fff4e5; color: #b54708; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.logout-modal h3 { margin: 0 0 8px; color: #172b4d; font-size: 18px; }
+.logout-modal p { margin: 0; color: #64748b; font-size: 13px; line-height: 1.6; }
+.logout-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+.cancel-button, .confirm-logout-button { min-width: 95px; border-radius: 7px; padding: 10px 16px; font-weight: 600; cursor: pointer; }
+.cancel-button { border: 1px solid #d5dce5; background: #fff; color: #334155; }
+.confirm-logout-button { border: 1px solid #b42318; background: #b42318; color: #fff; }

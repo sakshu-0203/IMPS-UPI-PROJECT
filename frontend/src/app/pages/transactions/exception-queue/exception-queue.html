@@ -1,0 +1,805 @@
+<div class="exception-page">
+
+  <!-- PAGE HEADER -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Exception Queue</h1>
+
+      <p>
+        Monitor and resolve IMPS transaction exceptions
+      </p>
+
+    </div>
+
+    <div class="record-count">
+
+      <i class="bi bi-exclamation-circle"></i>
+
+      <span>
+        {{ filteredTransactions.length }} Exceptions
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- SUMMARY -->
+
+  <div class="summary-grid">
+
+    <div class="summary-card">
+
+      <div class="summary-icon total">
+        <i class="bi bi-list-check"></i>
+      </div>
+
+      <div class="summary-content">
+
+        <span>Total Exceptions</span>
+
+        <strong>
+          {{ totalCount }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <div class="summary-icon high">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+
+      <div class="summary-content">
+
+        <span>High Priority</span>
+
+        <strong>
+          {{ highPriorityCount }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <div class="summary-icon open">
+        <i class="bi bi-folder2-open"></i>
+      </div>
+
+      <div class="summary-content">
+
+        <span>Open</span>
+
+        <strong>
+          {{ openCount }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <div class="summary-icon progress">
+        <i class="bi bi-arrow-repeat"></i>
+      </div>
+
+      <div class="summary-content">
+
+        <span>In Progress</span>
+
+        <strong>
+          {{ inProgressCount }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <div class="summary-icon resolved">
+        <i class="bi bi-check-circle"></i>
+      </div>
+
+      <div class="summary-content">
+
+        <span>Resolved</span>
+
+        <strong>
+          {{ resolvedCount }}
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- FILTERS -->
+
+  <section class="filter-card">
+
+    <div class="filter-field">
+
+      <label>
+        Search Exception
+      </label>
+
+      <div class="search-wrapper">
+
+        <i class="bi bi-search"></i>
+
+        <input
+          type="text"
+          [(ngModel)]="searchValue"
+          placeholder="Transaction ID / RRN / Customer / Exception"
+        />
+
+      </div>
+
+    </div>
+
+
+    <div class="filter-field">
+
+      <label>
+        Status
+      </label>
+
+      <select [(ngModel)]="status">
+
+        <option value="All">
+          All Status
+        </option>
+
+        <option value="Open">
+          Open
+        </option>
+
+        <option value="In Progress">
+          In Progress
+        </option>
+
+        <option value="Resolved">
+          Resolved
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="filter-field">
+
+      <label>
+        Priority
+      </label>
+
+      <select [(ngModel)]="priority">
+
+        <option value="All">
+          All Priority
+        </option>
+
+        <option value="High">
+          High
+        </option>
+
+        <option value="Medium">
+          Medium
+        </option>
+
+        <option value="Low">
+          Low
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="clear-btn"
+      (click)="clearFilters()">
+
+      <i class="bi bi-arrow-counterclockwise"></i>
+
+      Clear
+
+    </button>
+
+  </section>
+
+
+  <!-- TABLE -->
+
+  <section class="table-card">
+
+    <div class="table-header">
+
+      <div>
+
+        <h2>
+          Exception List
+        </h2>
+
+        <p>
+          Transactions requiring operational investigation
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Transaction ID</th>
+
+            <th>RRN</th>
+
+            <th>Date &amp; Time</th>
+
+            <th>Customer</th>
+
+            <th>Exception Type</th>
+
+            <th>Amount</th>
+
+            <th>Priority</th>
+
+            <th>Status</th>
+
+            <th>Action</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          @for (
+            transaction of filteredTransactions;
+            track transaction.transactionId
+          ) {
+
+            <tr>
+
+              <td>
+
+                <strong class="transaction-id">
+                  {{ transaction.transactionId }}
+                </strong>
+
+              </td>
+
+
+              <td>
+                {{ transaction.rrn }}
+              </td>
+
+
+              <td>
+                {{ transaction.date }}
+              </td>
+
+
+              <td>
+
+                <div class="customer">
+
+                  <strong>
+                    {{ transaction.customerName }}
+                  </strong>
+
+                  <span>
+                    {{ transaction.accountNumber }}
+                  </span>
+
+                </div>
+
+              </td>
+
+
+              <td>
+
+                <span class="exception-type">
+
+                  <i class="bi bi-exclamation-circle"></i>
+
+                  {{ transaction.exceptionType }}
+
+                </span>
+
+              </td>
+
+
+              <td>
+
+                <strong class="amount">
+
+                  ₹
+                  {{ transaction.amount | number:'1.2-2' }}
+
+                </strong>
+
+              </td>
+
+
+              <td>
+
+                @if (transaction.priority === 'High') {
+
+                  <span class="priority high">
+                    <span></span>
+                    High
+                  </span>
+
+                }
+
+                @if (transaction.priority === 'Medium') {
+
+                  <span class="priority medium">
+                    <span></span>
+                    Medium
+                  </span>
+
+                }
+
+                @if (transaction.priority === 'Low') {
+
+                  <span class="priority low">
+                    <span></span>
+                    Low
+                  </span>
+
+                }
+
+              </td>
+
+
+              <td>
+
+                @if (transaction.status === 'Open') {
+
+                  <span class="status open">
+                    <span></span>
+                    Open
+                  </span>
+
+                }
+
+                @if (transaction.status === 'In Progress') {
+
+                  <span class="status progress">
+                    <span></span>
+                    In Progress
+                  </span>
+
+                }
+
+                @if (transaction.status === 'Resolved') {
+
+                  <span class="status resolved">
+                    <span></span>
+                    Resolved
+                  </span>
+
+                }
+
+              </td>
+
+
+              <td>
+
+                <button
+                  type="button"
+                  class="view-btn"
+                  (click)="viewException(transaction)">
+
+                  <i class="bi bi-eye"></i>
+
+                  View
+
+                </button>
+
+              </td>
+
+            </tr>
+
+          }
+
+
+          @if (filteredTransactions.length === 0) {
+
+            <tr>
+
+              <td
+                colspan="9"
+                class="empty-state">
+
+                <i class="bi bi-inbox"></i>
+
+                <strong>
+                  No exceptions found
+                </strong>
+
+                <span>
+                  Try changing your search or filters.
+                </span>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- DETAILS PANEL -->
+
+  @if (selectedException) {
+
+    <div
+      class="overlay"
+      (click)="closeDetails()">
+
+      <div
+        class="details-panel"
+        (click)="$event.stopPropagation()">
+
+
+        <!-- HEADER -->
+
+        <div class="details-header">
+
+          <div>
+
+            <span>
+              Exception Details
+            </span>
+
+            <h2>
+              {{ selectedException.transactionId }}
+            </h2>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="close-btn"
+            (click)="closeDetails()">
+
+            <i class="bi bi-x-lg"></i>
+
+          </button>
+
+        </div>
+
+
+        <!-- PRIORITY + STATUS -->
+
+        <div class="detail-badges">
+
+
+          @if (
+            selectedException.priority === 'High'
+          ) {
+
+            <span class="priority high">
+              <span></span>
+              High Priority
+            </span>
+
+          }
+
+
+          @if (
+            selectedException.priority === 'Medium'
+          ) {
+
+            <span class="priority medium">
+              <span></span>
+              Medium Priority
+            </span>
+
+          }
+
+
+          @if (
+            selectedException.priority === 'Low'
+          ) {
+
+            <span class="priority low">
+              <span></span>
+              Low Priority
+            </span>
+
+          }
+
+
+          @if (
+            selectedException.status === 'Open'
+          ) {
+
+            <span class="status open">
+              <span></span>
+              Open
+            </span>
+
+          }
+
+
+          @if (
+            selectedException.status === 'In Progress'
+          ) {
+
+            <span class="status progress">
+              <span></span>
+              In Progress
+            </span>
+
+          }
+
+
+          @if (
+            selectedException.status === 'Resolved'
+          ) {
+
+            <span class="status resolved">
+              <span></span>
+              Resolved
+            </span>
+
+          }
+
+        </div>
+
+
+        <!-- AMOUNT -->
+
+        <div class="amount-box">
+
+          <span>
+            Transaction Amount
+          </span>
+
+          <strong>
+
+            ₹
+            {{ selectedException.amount | number:'1.2-2' }}
+
+          </strong>
+
+        </div>
+
+
+        <!-- TRANSACTION INFORMATION -->
+
+        <div class="details-section">
+
+          <h3>
+            Transaction Information
+          </h3>
+
+
+          <div class="details-grid">
+
+            <div>
+
+              <span>
+                Transaction ID
+              </span>
+
+              <strong>
+                {{ selectedException.transactionId }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                RRN
+              </span>
+
+              <strong>
+                {{ selectedException.rrn }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Date &amp; Time
+              </span>
+
+              <strong>
+                {{ selectedException.date }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Response Code
+              </span>
+
+              <strong>
+                {{ selectedException.responseCode }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- CUSTOMER -->
+
+        <div class="details-section">
+
+          <h3>
+            Customer Information
+          </h3>
+
+
+          <div class="details-grid">
+
+            <div>
+
+              <span>
+                Customer Name
+              </span>
+
+              <strong>
+                {{ selectedException.customerName }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Account Number
+              </span>
+
+              <strong>
+                {{ selectedException.accountNumber }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Exception Type
+              </span>
+
+              <strong>
+                {{ selectedException.exceptionType }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        @if (
+          selectedException.status !== 'Resolved'
+        ) {
+
+          <div class="action-section">
+
+            <h3>
+              Exception Action
+            </h3>
+
+
+            <div class="action-buttons">
+
+
+              @if (
+                selectedException.status === 'Open'
+              ) {
+
+                <button
+                  type="button"
+                  class="progress-btn"
+                  (click)="markInProgress(selectedException)">
+
+                  <i class="bi bi-arrow-repeat"></i>
+
+                  Mark In Progress
+
+                </button>
+
+              }
+
+
+              @if (
+                selectedException.status === 'In Progress'
+              ) {
+
+                <button
+                  type="button"
+                  class="resolve-btn"
+                  (click)="resolveException(selectedException)">
+
+                  <i class="bi bi-check-lg"></i>
+
+                  Resolve
+
+                </button>
+
+              }
+
+            </div>
+
+          </div>
+
+        }
+
+
+        <div class="details-footer">
+
+          <button
+            type="button"
+            class="close-details-btn"
+            (click)="closeDetails()">
+
+            Close
+
+          </button>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

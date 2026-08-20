@@ -1,0 +1,312 @@
+<div class="search-page">
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Transaction Search</h1>
+
+      <p>
+        Search and monitor IMPS transactions
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- SEARCH FILTERS -->
+
+  <div class="search-card">
+
+    <div class="form-group">
+
+      <label>Transaction ID</label>
+
+      <input
+        type="text"
+        [(ngModel)]="transactionId"
+        placeholder="Enter Transaction ID">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>RRN</label>
+
+      <input
+        type="text"
+        [(ngModel)]="rrn"
+        placeholder="Enter RRN">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>Account Number</label>
+
+      <input
+        type="text"
+        [(ngModel)]="account"
+        placeholder="Enter account number">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>Mobile Number</label>
+
+      <input
+        type="text"
+        [(ngModel)]="mobile"
+        placeholder="Enter mobile number">
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label>Status</label>
+
+      <select [(ngModel)]="status">
+
+        <option value="">
+          All Status
+        </option>
+
+        <option value="PENDING">
+          Pending
+        </option>
+
+        <option value="SUCCESS">
+          Success
+        </option>
+
+        <option value="FAILED">
+          Failed
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="buttons">
+
+      <button
+        class="search-btn"
+        type="button"
+        (click)="search()">
+
+        Search
+
+      </button>
+
+
+      <button
+        class="clear-btn"
+        type="button"
+        (click)="clear()">
+
+        Clear
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- ERROR -->
+
+  <div
+    class="error"
+    *ngIf="errorMessage">
+
+    {{ errorMessage }}
+
+  </div>
+
+
+  <!-- LOADING -->
+
+  <div
+    class="loading"
+    *ngIf="loading">
+
+    Searching transactions...
+
+  </div>
+
+
+  <!-- RESULT -->
+
+  <div
+    class="result-card"
+    *ngIf="
+      !loading &&
+      searched
+    ">
+
+    <div class="result-header">
+
+      <h2>Search Results</h2>
+
+      <span>
+
+        {{ transactions.length }}
+        transaction(s)
+
+      </span>
+
+    </div>
+
+
+    <div
+      class="no-result"
+      *ngIf="
+        transactions.length === 0
+      ">
+
+      No transactions found.
+
+    </div>
+
+
+    <div
+      class="table-wrapper"
+      *ngIf="
+        transactions.length > 0
+      ">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Transaction ID</th>
+
+            <th>RRN</th>
+
+            <th>Type</th>
+
+            <th>Direction</th>
+
+            <th>Sender</th>
+
+            <th>Beneficiary</th>
+
+            <th>Amount</th>
+
+            <th>Status</th>
+
+            <th>Date</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr
+            *ngFor="
+              let transaction of transactions
+            ">
+
+            <td class="transaction-id">
+
+              {{ transaction.transaction_id }}
+
+            </td>
+
+
+            <td>
+
+              {{ transaction.rrn || '-' }}
+
+            </td>
+
+
+            <td>
+
+              {{ transaction.transaction_type || '-' }}
+
+            </td>
+
+
+            <td>
+
+              {{ transaction.direction || '-' }}
+
+            </td>
+
+
+            <td>
+
+              {{ transaction.sender_account || '-' }}
+
+            </td>
+
+
+            <td>
+
+              {{ transaction.beneficiary_account || '-' }}
+
+            </td>
+
+
+            <td class="amount">
+
+              ₹{{ formatAmount(transaction.amount) }}
+
+            </td>
+
+
+            <td>
+
+              <span
+                class="status"
+                [class.pending]="
+                  transaction.transaction_status === 'PENDING'
+                "
+                [class.success]="
+                  transaction.transaction_status === 'SUCCESS'
+                "
+                [class.failed]="
+                  transaction.transaction_status === 'FAILED'
+                ">
+
+                {{
+                  transaction.transaction_status
+                }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              {{
+                transaction.transaction_date
+                  | date:'dd-MM-yyyy HH:mm'
+              }}
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>

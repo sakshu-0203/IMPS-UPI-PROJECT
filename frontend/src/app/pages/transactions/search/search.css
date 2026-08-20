@@ -1,0 +1,308 @@
+.search-page {
+  padding: 24px;
+  min-height: 100%;
+  background: #f5f7fb;
+}
+
+/* HEADER */
+
+.page-header {
+  margin-bottom: 22px;
+}
+
+.page-header h1 {
+  margin: 0;
+  color: #172033;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.page-header p {
+  margin: 6px 0 0;
+  color: #667085;
+  font-size: 14px;
+}
+
+/* SEARCH CARD */
+
+.search-card {
+  background: #ffffff;
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+  padding: 22px;
+
+  display: grid;
+  grid-template-columns:
+    repeat(5, minmax(150px, 1fr))
+    auto;
+
+  gap: 16px;
+  align-items: end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #344054;
+}
+
+.form-group input,
+.form-group select {
+  height: 40px;
+  padding: 0 11px;
+
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+
+  background: #ffffff;
+  color: #344054;
+
+  font-size: 13px;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #4677d5;
+  box-shadow: 0 0 0 2px rgba(70, 119, 213, 0.08);
+}
+
+/* BUTTONS */
+
+.buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.search-btn,
+.clear-btn {
+  height: 40px;
+  padding: 0 17px;
+
+  border-radius: 6px;
+  cursor: pointer;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.search-btn {
+  border: 1px solid #1d4ed8;
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+.search-btn:hover {
+  background: #1e40af;
+}
+
+.clear-btn {
+  border: 1px solid #d0d5dd;
+  background: #ffffff;
+  color: #344054;
+}
+
+.clear-btn:hover {
+  background: #f2f4f7;
+}
+
+/* ERROR */
+
+.error {
+  margin-top: 18px;
+  padding: 12px 15px;
+
+  border: 1px solid #f1b8b8;
+  border-radius: 7px;
+
+  background: #fff2f2;
+  color: #b42318;
+
+  font-size: 13px;
+}
+
+/* LOADING */
+
+.loading {
+  margin-top: 18px;
+  padding: 35px;
+
+  background: #ffffff;
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+
+  text-align: center;
+  color: #667085;
+  font-size: 14px;
+}
+
+/* RESULT */
+
+.result-card {
+  margin-top: 22px;
+
+  background: #ffffff;
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+
+  overflow: hidden;
+}
+
+.result-header {
+  padding: 17px 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border-bottom: 1px solid #e4e7ec;
+}
+
+.result-header h2 {
+  margin: 0;
+
+  font-size: 16px;
+  color: #172033;
+}
+
+.result-header span {
+  font-size: 12px;
+  color: #667085;
+}
+
+/* NO RESULT */
+
+.no-result {
+  padding: 50px;
+
+  text-align: center;
+  color: #667085;
+  font-size: 14px;
+}
+
+/* TABLE */
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 1100px;
+
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f8fafc;
+}
+
+th {
+  padding: 13px 15px;
+
+  text-align: left;
+  white-space: nowrap;
+
+  border-bottom: 1px solid #e4e7ec;
+
+  color: #475467;
+
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+td {
+  padding: 14px 15px;
+
+  border-bottom: 1px solid #edf0f4;
+
+  color: #344054;
+
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* TRANSACTION ID */
+
+.transaction-id {
+  color: #175cd3;
+  font-weight: 700;
+}
+
+/* AMOUNT */
+
+.amount {
+  color: #172033;
+  font-weight: 700;
+}
+
+/* STATUS */
+
+.status {
+  display: inline-block;
+
+  padding: 5px 10px;
+
+  border-radius: 20px;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.status.pending {
+  background: #fff4cc;
+  color: #8a5a00;
+}
+
+.status.success {
+  background: #eaf8ef;
+  color: #18733b;
+}
+
+.status.failed {
+  background: #fff0f0;
+  color: #b42318;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1200px) {
+
+  .search-card {
+    grid-template-columns:
+      repeat(3, minmax(180px, 1fr));
+  }
+
+}
+
+@media (max-width: 700px) {
+
+  .search-page {
+    padding: 15px;
+  }
+
+  .search-card {
+    grid-template-columns: 1fr;
+  }
+
+  .buttons {
+    width: 100%;
+  }
+
+  .search-btn,
+  .clear-btn {
+    flex: 1;
+  }
+
+}

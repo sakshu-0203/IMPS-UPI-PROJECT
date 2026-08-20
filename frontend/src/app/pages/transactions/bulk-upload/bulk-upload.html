@@ -1,0 +1,349 @@
+<div class="bulk-page">
+
+  <!-- HEADER -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Bulk Upload</h1>
+
+      <p>
+        Upload multiple IMPS transactions for processing
+      </p>
+
+    </div>
+
+    <button
+      class="template-btn"
+      type="button"
+      (click)="downloadTemplate()">
+
+      <i class="bi bi-download"></i>
+
+      Download Template
+
+    </button>
+
+  </div>
+
+
+  <!-- STATUS -->
+
+  @if (uploadStatus) {
+
+    <div class="status-message">
+
+      <i class="bi bi-info-circle"></i>
+
+      <span>{{ uploadStatus }}</span>
+
+    </div>
+
+  }
+
+
+  <div class="bulk-grid">
+
+
+    <!-- UPLOAD CARD -->
+
+    <section class="upload-card">
+
+      <div class="card-title">
+
+        <div>
+
+          <h2>Upload Transaction File</h2>
+
+          <p>
+            Upload CSV file containing IMPS transaction records
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- DROP AREA -->
+
+      <label class="drop-area">
+
+        <input
+          type="file"
+          accept=".csv"
+          (change)="onFileSelected($event)"
+        />
+
+        <div class="upload-icon">
+
+          <i class="bi bi-cloud-arrow-up"></i>
+
+        </div>
+
+        <h3>
+          Select transaction file
+        </h3>
+
+        <p>
+          Choose a CSV file from your computer
+        </p>
+
+        <span class="browse-text">
+          Browse File
+        </span>
+
+        <small>
+          Supported format: CSV
+        </small>
+
+      </label>
+
+
+      <!-- SELECTED FILE -->
+
+      @if (selectedFile) {
+
+        <div class="selected-file">
+
+          <div class="file-left">
+
+            <div class="file-icon">
+              <i class="bi bi-filetype-csv"></i>
+            </div>
+
+            <div>
+
+              <strong>
+                {{ selectedFile.name }}
+              </strong>
+
+              <small>
+                {{ selectedFile.size / 1024 | number:'1.0-2' }} KB
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="remove-btn"
+            (click)="removeFile()">
+
+            <i class="bi bi-trash"></i>
+
+          </button>
+
+        </div>
+
+      }
+
+
+      <!-- ACTIONS -->
+
+      <div class="upload-actions">
+
+        <button
+          type="button"
+          class="validate-btn"
+          (click)="validateFile()">
+
+          <i class="bi bi-check2-square"></i>
+
+          Validate File
+
+        </button>
+
+
+        <button
+          type="button"
+          class="upload-btn"
+          (click)="uploadFile()">
+
+          <i class="bi bi-upload"></i>
+
+          Upload & Process
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- INFORMATION -->
+
+    <aside class="info-card">
+
+      <div class="info-header">
+
+        <i class="bi bi-info-circle"></i>
+
+        <div>
+
+          <h2>Upload Guidelines</h2>
+
+          <p>
+            Follow these rules before uploading
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="guideline">
+
+        <i class="bi bi-file-earmark-check"></i>
+
+        <div>
+
+          <strong>File Format</strong>
+
+          <span>
+            Upload only CSV files using the approved template.
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="guideline">
+
+        <i class="bi bi-person-vcard"></i>
+
+        <div>
+
+          <strong>Beneficiary Details</strong>
+
+          <span>
+            Account number and IFSC must be valid.
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="guideline">
+
+        <i class="bi bi-currency-rupee"></i>
+
+        <div>
+
+          <strong>Transaction Amount</strong>
+
+          <span>
+            Amount must be greater than zero.
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="guideline">
+
+        <i class="bi bi-shield-check"></i>
+
+        <div>
+
+          <strong>Validation</strong>
+
+          <span>
+            Invalid records will be rejected before processing.
+          </span>
+
+        </div>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+
+  <!-- VALIDATION SUMMARY -->
+
+  @if (totalRecords > 0) {
+
+    <section class="validation-card">
+
+      <div class="validation-header">
+
+        <div>
+
+          <h2>Validation Summary</h2>
+
+          <p>
+            Results from the uploaded transaction file
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="summary-grid">
+
+        <div class="summary-box">
+
+          <span>Total Records</span>
+
+          <strong>
+            {{ totalRecords }}
+          </strong>
+
+          <i class="bi bi-files"></i>
+
+        </div>
+
+
+        <div class="summary-box valid">
+
+          <span>Valid Records</span>
+
+          <strong>
+            {{ validRecords }}
+          </strong>
+
+          <i class="bi bi-check-circle"></i>
+
+        </div>
+
+
+        <div class="summary-box invalid">
+
+          <span>Invalid Records</span>
+
+          <strong>
+            {{ invalidRecords }}
+          </strong>
+
+          <i class="bi bi-x-circle"></i>
+
+        </div>
+
+      </div>
+
+
+      <div class="validation-note">
+
+        <i class="bi bi-exclamation-triangle"></i>
+
+        <span>
+          Review invalid records before submitting the batch
+          for transaction processing.
+        </span>
+
+      </div>
+
+    </section>
+
+  }
+
+
+</div>

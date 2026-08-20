@@ -1,0 +1,534 @@
+/* ========================================
+   PAGE
+======================================== */
+
+.approvals-page {
+  width: 100%;
+}
+
+
+/* ========================================
+   HEADER
+======================================== */
+
+.page-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 22px;
+}
+
+.page-header h1 {
+  margin: 0;
+
+  color: #172b4d;
+
+  font-size: 25px;
+
+  font-weight: 700;
+}
+
+.page-header p {
+  margin: 6px 0 0;
+
+  color: #718096;
+
+  font-size: 13px;
+}
+
+
+/* ========================================
+   REFRESH BUTTON
+======================================== */
+
+.refresh-btn {
+  height: 38px;
+
+  padding: 0 16px;
+
+  border: 1px solid #1769aa;
+
+  border-radius: 6px;
+
+  background: #1769aa;
+
+  color: white;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+.refresh-btn:hover {
+  background: #12598f;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+}
+
+
+/* ========================================
+   ROTATING REFRESH ICON
+======================================== */
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+
+/* ========================================
+   MESSAGE
+======================================== */
+
+.message {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 11px 14px;
+
+  margin-bottom: 18px;
+
+  border-radius: 6px;
+
+  font-size: 12px;
+}
+
+.error-message {
+  background: #fff4f4;
+
+  border: 1px solid #ffd5d5;
+
+  color: #b42318;
+}
+
+.success-message {
+  background: #f0fdf4;
+
+  border: 1px solid #bbf7d0;
+
+  color: #15803d;
+}
+
+
+/* ========================================
+   LOADING
+======================================== */
+
+.loading {
+  padding: 60px 20px;
+
+  text-align: center;
+
+  background: white;
+
+  border: 1px solid #e5e9f0;
+
+  border-radius: 9px;
+}
+
+.loading i {
+  display: block;
+
+  margin-bottom: 12px;
+
+  color: #1769aa;
+
+  font-size: 30px;
+}
+
+.loading p {
+  margin: 0;
+
+  color: #718096;
+
+  font-size: 12px;
+}
+
+
+/* ========================================
+   TABLE CARD
+======================================== */
+
+.table-card {
+  width: 100%;
+
+  background: white;
+
+  border: 1px solid #e5e9f0;
+
+  border-radius: 9px;
+
+  overflow: hidden;
+}
+
+
+/* ========================================
+   TABLE HEADER
+======================================== */
+
+.table-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 18px 20px;
+
+  border-bottom: 1px solid #edf0f4;
+}
+
+.table-header h2 {
+  margin: 0;
+
+  color: #172b4d;
+
+  font-size: 16px;
+}
+
+.table-header p {
+  margin: 5px 0 0;
+
+  color: #94a3b8;
+
+  font-size: 11px;
+}
+
+.refreshing-text {
+  color: #1769aa;
+
+  font-size: 11px;
+
+  font-weight: 600;
+}
+
+
+/* ========================================
+   TABLE WRAPPER
+======================================== */
+
+.table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+
+/* ========================================
+   TABLE
+======================================== */
+
+table {
+  width: 100%;
+
+  min-width: 1150px;
+
+  border-collapse: collapse;
+}
+
+
+/* ========================================
+   TH
+======================================== */
+
+th {
+  padding: 13px 14px;
+
+  background: #f8fafc;
+
+  color: #475569;
+
+  text-align: left;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  border-bottom: 1px solid #e5e9f0;
+
+  white-space: nowrap;
+}
+
+
+/* ========================================
+   TD
+======================================== */
+
+td {
+  padding: 14px;
+
+  color: #475569;
+
+  text-align: left;
+
+  font-size: 11px;
+
+  border-bottom: 1px solid #f1f4f7;
+
+  white-space: nowrap;
+}
+
+
+/* ========================================
+   HOVER
+======================================== */
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+
+/* ========================================
+   TRANSACTION ID
+======================================== */
+
+.transaction-id {
+  color: #1769aa;
+
+  font-size: 11px;
+
+  font-weight: 700;
+}
+
+
+/* ========================================
+   TYPE
+======================================== */
+
+.transaction-type {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 6px 9px;
+
+  border-radius: 6px;
+
+  background: #eaf3fb;
+
+  color: #1769aa;
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+
+/* ========================================
+   AMOUNT
+======================================== */
+
+.amount {
+  color: #172b4d;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+
+/* ========================================
+   STATUS
+======================================== */
+
+.status {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 5px 10px;
+
+  border-radius: 20px;
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+.status.pending {
+  background: #fef3c7;
+
+  color: #92400e;
+}
+
+
+/* ========================================
+   ACTIONS
+======================================== */
+
+.actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+
+/* ========================================
+   APPROVE
+======================================== */
+
+.approve-btn {
+  height: 32px;
+
+  padding: 0 11px;
+
+  border: none;
+
+  border-radius: 5px;
+
+  background: #198754;
+
+  color: white;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+}
+
+.approve-btn:hover {
+  background: #157347;
+}
+
+
+/* ========================================
+   REJECT
+======================================== */
+
+.reject-btn {
+  height: 32px;
+
+  padding: 0 11px;
+
+  border: none;
+
+  border-radius: 5px;
+
+  background: #dc3545;
+
+  color: white;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+}
+
+.reject-btn:hover {
+  background: #bb2d3b;
+}
+
+
+/* ========================================
+   EMPTY
+======================================== */
+
+.empty-state {
+  padding: 60px 20px;
+
+  text-align: center;
+
+  background: white;
+
+  border: 1px solid #e5e9f0;
+
+  border-radius: 9px;
+}
+
+.empty-state > i {
+  display: block;
+
+  margin-bottom: 12px;
+
+  color: #198754;
+
+  font-size: 40px;
+}
+
+.empty-state h3 {
+  margin: 0 0 7px;
+
+  color: #172b4d;
+
+  font-size: 16px;
+}
+
+.empty-state p {
+  margin: 0 0 18px;
+
+  color: #94a3b8;
+
+  font-size: 11px;
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 700px) {
+
+  .page-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 12px;
+  }
+
+  .refresh-btn {
+    width: 100%;
+
+    justify-content: center;
+  }
+
+}

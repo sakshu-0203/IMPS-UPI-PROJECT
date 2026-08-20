@@ -1,0 +1,702 @@
+<div class="reversal-page">
+
+  <!-- PAGE HEADER -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Reversal</h1>
+
+      <p>
+        Manage IMPS transaction reversal requests and approvals
+      </p>
+
+    </div>
+
+    <div class="record-count">
+
+      <i class="bi bi-arrow-repeat"></i>
+
+      <span>
+        {{ filteredTransactions.length }} Requests
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- SUMMARY CARDS -->
+
+  <div class="summary-grid">
+
+    <div class="summary-card">
+
+      <div class="summary-icon total">
+        <i class="bi bi-arrow-repeat"></i>
+      </div>
+
+      <div class="summary-content">
+
+        <span>Total Requests</span>
+
+        <strong>
+          {{ totalCount }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <div class="summary-icon pending">
+        <i class="bi bi-clock-history"></i>
+      </div>
+
+      <div class="summary-content">
+
+        <span>Pending</span>
+
+        <strong>
+          {{ pendingCount }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <div class="summary-icon approved">
+        <i class="bi bi-check-circle"></i>
+      </div>
+
+      <div class="summary-content">
+
+        <span>Approved</span>
+
+        <strong>
+          {{ approvedCount }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <div class="summary-icon completed">
+        <i class="bi bi-check2-all"></i>
+      </div>
+
+      <div class="summary-content">
+
+        <span>Completed</span>
+
+        <strong>
+          {{ completedCount }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <div class="summary-icon rejected">
+        <i class="bi bi-x-circle"></i>
+      </div>
+
+      <div class="summary-content">
+
+        <span>Rejected</span>
+
+        <strong>
+          {{ rejectedCount }}
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- FILTERS -->
+
+  <section class="filter-card">
+
+    <div class="filter-field">
+
+      <label>
+        Search Transaction
+      </label>
+
+      <div class="search-wrapper">
+
+        <i class="bi bi-search"></i>
+
+        <input
+          type="text"
+          [(ngModel)]="searchValue"
+          placeholder="Transaction ID / RRN / Customer / Account"
+        />
+
+      </div>
+
+    </div>
+
+
+    <div class="filter-field status-field">
+
+      <label>
+        Status
+      </label>
+
+      <select [(ngModel)]="status">
+
+        <option value="All">
+          All Status
+        </option>
+
+        <option value="Pending">
+          Pending
+        </option>
+
+        <option value="Approved">
+          Approved
+        </option>
+
+        <option value="Completed">
+          Completed
+        </option>
+
+        <option value="Rejected">
+          Rejected
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="clear-btn"
+      (click)="clearFilters()">
+
+      <i class="bi bi-arrow-counterclockwise"></i>
+
+      Clear
+
+    </button>
+
+  </section>
+
+
+  <!-- TABLE -->
+
+  <section class="table-card">
+
+    <div class="table-header">
+
+      <div>
+
+        <h2>
+          Reversal Requests
+        </h2>
+
+        <p>
+          Review and process transaction reversal requests
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Transaction ID</th>
+
+            <th>RRN</th>
+
+            <th>Date &amp; Time</th>
+
+            <th>Customer</th>
+
+            <th>Amount</th>
+
+            <th>Reason</th>
+
+            <th>Status</th>
+
+            <th>Action</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          @for (
+            transaction of filteredTransactions;
+            track transaction.transactionId
+          ) {
+
+            <tr>
+
+              <td>
+
+                <strong class="transaction-id">
+                  {{ transaction.transactionId }}
+                </strong>
+
+              </td>
+
+
+              <td>
+                {{ transaction.rrn }}
+              </td>
+
+
+              <td>
+                {{ transaction.originalDate }}
+              </td>
+
+
+              <td>
+
+                <div class="customer">
+
+                  <strong>
+                    {{ transaction.customerName }}
+                  </strong>
+
+                  <span>
+                    {{ transaction.accountNumber }}
+                  </span>
+
+                </div>
+
+              </td>
+
+
+              <td>
+
+                <strong class="amount">
+
+                  ₹
+                  {{ transaction.amount | number:'1.2-2' }}
+
+                </strong>
+
+              </td>
+
+
+              <td>
+
+                <span class="reason">
+
+                  {{ transaction.reason }}
+
+                </span>
+
+              </td>
+
+
+              <td>
+
+                @if (transaction.status === 'Pending') {
+
+                  <span class="status pending">
+
+                    <span></span>
+
+                    Pending
+
+                  </span>
+
+                }
+
+
+                @if (transaction.status === 'Approved') {
+
+                  <span class="status approved">
+
+                    <span></span>
+
+                    Approved
+
+                  </span>
+
+                }
+
+
+                @if (transaction.status === 'Completed') {
+
+                  <span class="status completed">
+
+                    <span></span>
+
+                    Completed
+
+                  </span>
+
+                }
+
+
+                @if (transaction.status === 'Rejected') {
+
+                  <span class="status rejected">
+
+                    <span></span>
+
+                    Rejected
+
+                  </span>
+
+                }
+
+              </td>
+
+
+              <td>
+
+                <button
+                  type="button"
+                  class="view-btn"
+                  (click)="viewTransaction(transaction)">
+
+                  <i class="bi bi-eye"></i>
+
+                  View
+
+                </button>
+
+              </td>
+
+            </tr>
+
+          }
+
+
+          @if (filteredTransactions.length === 0) {
+
+            <tr>
+
+              <td
+                colspan="8"
+                class="empty-state">
+
+                <i class="bi bi-inbox"></i>
+
+                <strong>
+                  No reversal requests found
+                </strong>
+
+                <span>
+                  Try changing your search or status filter.
+                </span>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- DETAILS PANEL -->
+
+  @if (selectedTransaction) {
+
+    <div
+      class="overlay"
+      (click)="closeDetails()">
+
+      <div
+        class="details-panel"
+        (click)="$event.stopPropagation()">
+
+
+        <!-- HEADER -->
+
+        <div class="details-header">
+
+          <div>
+
+            <span>
+              Reversal Request
+            </span>
+
+            <h2>
+              {{ selectedTransaction.transactionId }}
+            </h2>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="close-btn"
+            (click)="closeDetails()">
+
+            <i class="bi bi-x-lg"></i>
+
+          </button>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div
+          class="large-status"
+
+          [class.pending]="
+            selectedTransaction.status === 'Pending'
+          "
+
+          [class.approved]="
+            selectedTransaction.status === 'Approved'
+          "
+
+          [class.completed]="
+            selectedTransaction.status === 'Completed'
+          "
+
+          [class.rejected]="
+            selectedTransaction.status === 'Rejected'
+          ">
+
+
+          @if (
+            selectedTransaction.status === 'Pending'
+          ) {
+
+            <i class="bi bi-clock-history"></i>
+
+          }
+
+
+          @if (
+            selectedTransaction.status === 'Approved'
+          ) {
+
+            <i class="bi bi-check-circle"></i>
+
+          }
+
+
+          @if (
+            selectedTransaction.status === 'Completed'
+          ) {
+
+            <i class="bi bi-check2-all"></i>
+
+          }
+
+
+          @if (
+            selectedTransaction.status === 'Rejected'
+          ) {
+
+            <i class="bi bi-x-circle"></i>
+
+          }
+
+
+          {{ selectedTransaction.status }}
+
+        </div>
+
+
+        <!-- AMOUNT -->
+
+        <div class="amount-box">
+
+          <span>
+            Reversal Amount
+          </span>
+
+          <strong>
+
+            ₹
+            {{ selectedTransaction.amount | number:'1.2-2' }}
+
+          </strong>
+
+        </div>
+
+
+        <!-- TRANSACTION DETAILS -->
+
+        <div class="details-section">
+
+          <h3>
+            Transaction Information
+          </h3>
+
+
+          <div class="details-grid">
+
+            <div>
+
+              <span>
+                Transaction ID
+              </span>
+
+              <strong>
+                {{ selectedTransaction.transactionId }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                RRN
+              </span>
+
+              <strong>
+                {{ selectedTransaction.rrn }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Original Date
+              </span>
+
+              <strong>
+                {{ selectedTransaction.originalDate }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Account Number
+              </span>
+
+              <strong>
+                {{ selectedTransaction.accountNumber }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- REVERSAL REASON -->
+
+        <div class="details-section">
+
+          <h3>
+            Reversal Reason
+          </h3>
+
+          <div class="reason-box">
+
+            {{ selectedTransaction.reason }}
+
+          </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        @if (
+          selectedTransaction.status === 'Pending'
+        ) {
+
+          <div class="action-section">
+
+            <h3>
+              Reversal Action
+            </h3>
+
+
+            <div class="action-buttons">
+
+              <button
+                type="button"
+                class="approve-btn"
+                (click)="approveReversal(selectedTransaction)">
+
+                <i class="bi bi-check-lg"></i>
+
+                Approve
+
+              </button>
+
+
+              <button
+                type="button"
+                class="reject-btn"
+                (click)="rejectReversal(selectedTransaction)">
+
+                <i class="bi bi-x-lg"></i>
+
+                Reject
+
+              </button>
+
+            </div>
+
+          </div>
+
+        }
+
+
+        <div class="details-footer">
+
+          <button
+            type="button"
+            class="close-details-btn"
+            (click)="closeDetails()">
+
+            Close
+
+          </button>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

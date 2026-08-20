@@ -1,0 +1,445 @@
+<div class="transfer-page">
+
+  <!-- PAGE HEADER -->
+
+  <div class="page-header">
+
+    <div>
+      <h1>New IMPS Transfer</h1>
+
+      <p>
+        Initiate a new domestic instant money transfer
+      </p>
+    </div>
+
+    <div class="transaction-type">
+      <i class="bi bi-lightning-charge"></i>
+      IMPS
+    </div>
+
+  </div>
+
+
+  <!-- ERROR -->
+
+  @if (errorMessage) {
+
+    <div class="message error-message">
+      <i class="bi bi-exclamation-circle"></i>
+
+      <span>{{ errorMessage }}</span>
+    </div>
+
+  }
+
+
+  <!-- SUCCESS -->
+
+  @if (successMessage) {
+
+    <div class="message success-message">
+      <i class="bi bi-check-circle"></i>
+
+      <span>{{ successMessage }}</span>
+    </div>
+
+  }
+
+
+  <div class="transfer-grid">
+
+    <!-- FORM -->
+
+    <section class="form-card">
+
+      <div class="card-header">
+
+        <div>
+          <h2>Transfer Details</h2>
+
+          <p>
+            Enter the beneficiary and payment information
+          </p>
+        </div>
+
+      </div>
+
+
+      <form (ngSubmit)="submitTransfer()">
+
+
+        <!-- DEBIT ACCOUNT -->
+
+        <div class="form-group">
+
+          <label>
+            Debit Account
+            <span>*</span>
+          </label>
+
+          <select
+            [(ngModel)]="debitAccount"
+            name="debitAccount">
+
+            <option value="">
+              Select debit account
+            </option>
+
+            <option value="123456789012">
+              XXXXXX4582 — Savings
+            </option>
+
+            <option value="123456789013">
+              XXXXXX7821 — Current
+            </option>
+
+          </select>
+          @if (fieldErrors['debitAccount']) { <small class="field-error">{{ fieldErrors['debitAccount'] }}</small> }
+
+        </div>
+
+
+        <!-- BENEFICIARY -->
+
+        <div class="section-title">
+          Beneficiary Information
+        </div>
+
+
+        <div class="form-row">
+
+          <div class="form-group">
+
+            <label>
+              Beneficiary Name
+              <span>*</span>
+            </label>
+
+            <input
+              type="text"
+              [(ngModel)]="beneficiaryName"
+              name="beneficiaryName"
+              placeholder="Enter beneficiary name"
+              required
+              maxlength="100"
+            />
+            @if (fieldErrors['beneficiaryName']) { <small class="field-error">{{ fieldErrors['beneficiaryName'] }}</small> }
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Beneficiary Account
+              <span>*</span>
+            </label>
+
+            <input
+              type="text"
+              [(ngModel)]="beneficiaryAccount"
+              name="beneficiaryAccount"
+              placeholder="Enter account number"
+              required
+              minlength="9"
+              maxlength="18"
+            />
+            @if (fieldErrors['beneficiaryAccount']) { <small class="field-error">{{ fieldErrors['beneficiaryAccount'] }}</small> }
+
+          </div>
+
+        </div>
+
+
+        <div class="form-row">
+
+          <div class="form-group">
+
+            <label>
+              IFSC Code
+              <span>*</span>
+            </label>
+
+            <input
+              type="text"
+              [(ngModel)]="ifscCode"
+              name="ifscCode"
+              placeholder="Example: ABCD0123456"
+              required
+              minlength="11"
+              maxlength="11"
+            />
+            @if (fieldErrors['ifscCode']) { <small class="field-error">{{ fieldErrors['ifscCode'] }}</small> }
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Transfer Purpose
+              <span>*</span>
+            </label>
+
+            <select
+              [(ngModel)]="purpose"
+              name="purpose">
+
+              <option value="">
+                Select purpose
+              </option>
+
+              <option value="Personal">
+                Personal
+              </option>
+
+              <option value="Education">
+                Education
+              </option>
+
+              <option value="Medical">
+                Medical
+              </option>
+
+              <option value="Business">
+                Business
+              </option>
+
+              <option value="Other">
+                Other
+              </option>
+
+            </select>
+            @if (fieldErrors['purpose']) { <small class="field-error">{{ fieldErrors['purpose'] }}</small> }
+
+          </div>
+
+        </div>
+
+
+        <!-- PAYMENT -->
+
+        <div class="section-title">
+          Payment Information
+        </div>
+
+
+        <div class="form-row">
+
+          <div class="form-group">
+
+            <label>
+              Transfer Amount
+              <span>*</span>
+            </label>
+
+            <div class="amount-input">
+
+              <span>₹</span>
+
+              <input
+                type="number"
+                [(ngModel)]="amount"
+                name="amount"
+                min="1"
+                placeholder="0.00"
+                required
+                min="1"
+                max="500000"
+                step="0.01"
+              />
+              @if (fieldErrors['amount']) { <small class="field-error">{{ fieldErrors['amount'] }}</small> }
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Charges
+            </label>
+
+            <input
+              type="text"
+              value="Calculated by system"
+              disabled
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- REMARKS -->
+
+        <div class="form-group">
+
+          <label>
+            Transaction Remarks
+          </label>
+
+          <textarea
+            [(ngModel)]="remarks"
+            name="remarks"
+            rows="3"
+            maxlength="200"
+            placeholder="Enter transaction remarks">
+          </textarea>
+          @if (fieldErrors['remarks']) { <small class="field-error">{{ fieldErrors['remarks'] }}</small> }
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="btn-secondary"
+            (click)="resetForm()">
+
+            <i class="bi bi-arrow-counterclockwise"></i>
+
+            Reset
+
+          </button>
+
+
+         <button
+  type="submit"
+  class="btn-primary"
+  [disabled]="loading">
+
+  <i
+    class="bi"
+    [class.bi-arrow-right-circle]="!loading"
+    [class.bi-hourglass-split]="loading">
+  </i>
+
+  {{ loading ? 'Processing...' : 'Continue' }}
+
+</button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+
+    <!-- SUMMARY -->
+
+    <aside class="summary-card">
+
+      <div class="summary-header">
+
+        <i class="bi bi-receipt"></i>
+
+        <div>
+          <h2>Transfer Summary</h2>
+
+          <p>
+            Review before submission
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>Transfer Type</span>
+
+        <strong>IMPS</strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>Debit Account</span>
+
+        <strong>
+          {{ debitAccount || 'Not selected' }}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>Beneficiary</span>
+
+        <strong>
+          {{ beneficiaryName || 'Not entered' }}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>Account Number</span>
+
+        <strong>
+          {{ beneficiaryAccount || 'Not entered' }}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>IFSC</span>
+
+        <strong>
+          {{ ifscCode || 'Not entered' }}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>Purpose</span>
+
+        <strong>
+          {{ purpose || 'Not selected' }}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-divider"></div>
+
+
+      <div class="amount-summary">
+
+        <span>Transfer Amount</span>
+
+        <strong>
+          ₹ {{ amount || '0.00' }}
+        </strong>
+
+      </div>
+
+
+      <div class="security-note">
+
+        <i class="bi bi-shield-check"></i>
+
+        <span>
+          Transaction will be processed through
+          the secure banking network.
+        </span>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+</div>

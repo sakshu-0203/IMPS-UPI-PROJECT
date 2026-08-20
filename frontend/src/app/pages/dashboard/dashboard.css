@@ -1,0 +1,390 @@
+.dashboard-page {
+  padding: 24px;
+  background: #f5f7fb;
+  min-height: 100%;
+}
+
+
+/* HEADER */
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #172033;
+}
+
+.dashboard-header p {
+  margin: 6px 0 0;
+  color: #667085;
+  font-size: 13px;
+}
+
+
+/* REFRESH */
+
+.refresh-btn {
+  height: 38px;
+  padding: 0 15px;
+
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+
+  background: #ffffff;
+  color: #344054;
+
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.refresh-btn:hover {
+  background: #f2f4f7;
+}
+
+
+/* SUMMARY */
+
+.summary-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 16px;
+}
+
+
+.summary-card {
+  background: #ffffff;
+
+  border: 1px solid #e4e7ec;
+
+  border-radius: 10px;
+
+  padding: 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+
+.card-icon {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: #eef4ff;
+
+  color: #175cd3;
+
+  font-size: 20px;
+}
+
+
+.card-label {
+  display: block;
+
+  color: #667085;
+
+  font-size: 12px;
+
+  margin-bottom: 6px;
+}
+
+
+.summary-card h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 24px;
+}
+
+
+/* AMOUNT */
+
+.amount-card {
+  margin-top: 16px;
+
+  padding: 20px 24px;
+
+  background: #ffffff;
+
+  border: 1px solid #e4e7ec;
+
+  border-radius: 10px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+}
+
+
+.amount-card span {
+  color: #667085;
+
+  font-size: 12px;
+}
+
+
+.amount-card h2 {
+  margin: 7px 0 0;
+
+  color: #172033;
+
+  font-size: 24px;
+}
+
+
+.amount-card > i {
+  font-size: 32px;
+
+  color: #175cd3;
+}
+
+
+/* TRANSACTIONS */
+
+.transactions-card {
+  margin-top: 22px;
+
+  background: #ffffff;
+
+  border: 1px solid #e4e7ec;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+}
+
+
+.section-header {
+  padding: 18px 20px;
+
+  border-bottom: 1px solid #e4e7ec;
+}
+
+
+.section-header h2 {
+  margin: 0;
+
+  font-size: 16px;
+
+  color: #172033;
+}
+
+
+.section-header p {
+  margin: 5px 0 0;
+
+  color: #667085;
+
+  font-size: 12px;
+}
+
+
+/* TABLE */
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+
+table {
+  width: 100%;
+
+  min-width: 900px;
+
+  border-collapse: collapse;
+}
+
+
+thead {
+  background: #f8fafc;
+}
+
+
+th {
+  padding: 12px 15px;
+
+  text-align: left;
+
+  color: #475467;
+
+  font-size: 11px;
+
+  text-transform: uppercase;
+
+  border-bottom: 1px solid #e4e7ec;
+}
+
+
+td {
+  padding: 13px 15px;
+
+  color: #344054;
+
+  font-size: 13px;
+
+  border-bottom: 1px solid #edf0f4;
+
+  white-space: nowrap;
+}
+
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+
+.transaction-id {
+  color: #175cd3;
+
+  font-weight: 700;
+}
+
+
+.amount {
+  font-weight: 700;
+
+  color: #172033;
+}
+
+
+/* STATUS */
+
+.status {
+  display: inline-block;
+
+  padding: 5px 9px;
+
+  border-radius: 20px;
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+
+.status.success {
+  background: #eaf8ef;
+
+  color: #18733b;
+}
+
+
+.status.pending {
+  background: #fff4cc;
+
+  color: #8a5a00;
+}
+
+
+.status.failed {
+  background: #fff0f0;
+
+  color: #b42318;
+}
+
+
+/* LOADING */
+
+.loading {
+  padding: 60px;
+
+  background: #ffffff;
+
+  border: 1px solid #e4e7ec;
+
+  border-radius: 10px;
+
+  text-align: center;
+
+  color: #667085;
+
+  font-size: 14px;
+}
+
+
+/* ERROR */
+
+.error-message {
+  margin-bottom: 18px;
+
+  padding: 12px 15px;
+
+  background: #fff2f2;
+
+  border: 1px solid #f1b8b8;
+
+  border-radius: 7px;
+
+  color: #b42318;
+
+  font-size: 13px;
+}
+
+
+/* NO DATA */
+
+.no-data {
+  padding: 45px;
+
+  text-align: center;
+
+  color: #667085;
+
+  font-size: 13px;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+
+  .summary-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+}
+
+
+@media (max-width: 650px) {
+
+  .dashboard-page {
+    padding: 15px;
+  }
+
+  .dashboard-header {
+    align-items: flex-start;
+
+    gap: 15px;
+
+    flex-direction: column;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
