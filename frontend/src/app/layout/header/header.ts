@@ -78,7 +78,7 @@ export class Header implements OnInit {
     }
 
     const clickedInsideProfile =
-      !!target.closest('.user-menu');
+      !!target.closest('.user-menu-wrapper');
 
     if (!clickedInsideProfile) {
 
