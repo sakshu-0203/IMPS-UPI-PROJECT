@@ -1,55 +1,213 @@
 <header class="top-header">
+
+  <!-- LEFT -->
   <div class="header-left">
+
     <div class="header-brand">
-      <span class="brand-name">AllianzaPay</span>
-      <span class="brand-module">IMPS Operations</span>
+
+      <span class="brand-name">
+        Allianza
+      </span>
+
+      <span class="brand-module">
+        IMPS Operations
+      </span>
+
     </div>
+
   </div>
 
+
+  <!-- SEARCH -->
   <div class="header-search">
-    <i class="bi bi-search"></i>
-    <input type="text" placeholder="Search Transaction ID, RRN, Mobile" aria-label="Global transaction search" />
+
+    <i
+      class="bi bi-search"
+      aria-hidden="true">
+    </i>
+
+    <input
+      type="text"
+      placeholder="Search Transaction ID, RRN, Mobile"
+      aria-label="Search transactions"
+    />
+
   </div>
 
+
+  <!-- RIGHT -->
   <div class="header-right">
-    <div class="system-status"><span class="status-dot"></span><span>System Operational</span></div>
+
+    <!-- SYSTEM STATUS -->
+    <div class="system-status">
+
+      <span class="status-dot"></span>
+
+      <span>
+        System Operational
+      </span>
+
+    </div>
+
+
     <div class="header-divider"></div>
 
-    <div class="user-menu-wrapper">
-      <button type="button" class="user-section" (click)="toggleUserMenu()" aria-haspopup="menu" [attr.aria-expanded]="showUserMenu">
-        <div class="user-avatar">{{ (user?.employeeName || 'A').charAt(0).toUpperCase() }}</div>
-        <div class="user-details">
-          <strong>{{ user?.employeeName || 'Admin' }}</strong>
-          <span>{{ user?.role || 'Operations' }}</span>
+
+    <!-- USER MENU -->
+    <div
+      class="user-menu"
+      [class.open]="profileOpen">
+
+      <button
+        type="button"
+        class="user-section"
+        aria-haspopup="true"
+        [attr.aria-expanded]="profileOpen"
+        (click)="toggleProfile()">
+
+        <div class="user-avatar">
+          {{ userName.charAt(0).toUpperCase() }}
         </div>
-        <i class="bi bi-chevron-down"></i>
+
+        <div class="user-details">
+
+          <strong>
+            {{ userName }}
+          </strong>
+
+          <span>
+            {{ userRole }}
+          </span>
+
+        </div>
+
+        <i
+          class="bi"
+          [class.bi-chevron-down]="!profileOpen"
+          [class.bi-chevron-up]="profileOpen"
+          aria-hidden="true">
+        </i>
+
       </button>
 
-      @if (showUserMenu) {
-        <div class="user-dropdown" role="menu">
-          <div class="user-dropdown-info">
-            <strong>{{ user?.employeeName || 'Admin' }}</strong>
-            <span>{{ user?.employeeId || '' }} · {{ user?.role || 'Operations' }}</span>
+
+      <!-- PROFILE DROPDOWN -->
+      <div
+        class="profile-dropdown"
+        *ngIf="profileOpen">
+
+        <div class="profile-dropdown-header">
+
+          <div class="dropdown-avatar">
+            {{ userName.charAt(0).toUpperCase() }}
           </div>
-          <button type="button" class="logout-menu-button" (click)="openLogoutConfirmation()">
-            <i class="bi bi-box-arrow-right"></i> Logout
-          </button>
+
+          <div>
+
+            <strong>
+              {{ userName }}
+            </strong>
+
+            <span>
+              {{ userRole }}
+            </span>
+
+          </div>
+
         </div>
-      }
+
+
+        <div class="dropdown-divider"></div>
+
+
+        <button
+          type="button"
+          class="dropdown-item logout-item"
+          (click)="openLogoutConfirmation($event)">
+
+          <i
+            class="bi bi-box-arrow-right"
+            aria-hidden="true">
+          </i>
+
+          <span>
+            Logout
+          </span>
+
+        </button>
+
+      </div>
+
     </div>
+
   </div>
 
-  @if (showLogoutModal) {
-    <div class="logout-overlay" role="presentation" (click)="cancelLogout()">
-      <div class="logout-modal" role="dialog" aria-modal="true" aria-labelledby="logout-title" (click)="$event.stopPropagation()">
-        <div class="logout-icon"><i class="bi bi-box-arrow-right"></i></div>
-        <h3 id="logout-title">Are you sure you want to logout?</h3>
-        <p>Your current session will be cleared and you will be redirected to the Login page.</p>
-        <div class="logout-actions">
-          <button type="button" class="cancel-button" (click)="cancelLogout()">Cancel</button>
-          <button type="button" class="confirm-logout-button" (click)="confirmLogout()">Logout</button>
-        </div>
-      </div>
-    </div>
-  }
 </header>
+
+
+<!-- =========================
+     LOGOUT CONFIRMATION MODAL
+     ========================= -->
+
+<div
+  class="logout-overlay"
+  *ngIf="logoutModalOpen"
+  (click)="closeLogoutModalFromBackdrop($event)"
+  role="presentation">
+
+  <section
+    class="logout-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="logout-title"
+    (click)="$event.stopPropagation()">
+
+    <div class="logout-icon">
+
+      <i
+        class="bi bi-box-arrow-right"
+        aria-hidden="true">
+      </i>
+
+    </div>
+
+
+    <div class="logout-content">
+
+      <h2 id="logout-title">
+        Logout
+      </h2>
+
+      <p>
+        Are you sure you want to logout?
+      </p>
+
+    </div>
+
+
+    <div class="logout-actions">
+
+      <button
+        type="button"
+        class="cancel-button"
+        (click)="cancelLogout($event)">
+
+        Cancel
+
+      </button>
+
+
+      <button
+        type="button"
+        class="confirm-logout-button"
+        (click)="confirmLogout($event)">
+
+        Logout
+
+      </button>
+
+    </div>
+
+  </section>
+
+</div>

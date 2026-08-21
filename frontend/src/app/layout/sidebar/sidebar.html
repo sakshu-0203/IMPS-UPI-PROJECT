@@ -1,7 +1,6 @@
 <aside class="sidebar">
 
   <!-- BRAND -->
-
   <div class="sidebar-brand">
 
     <div class="brand-logo">
@@ -17,26 +16,23 @@
 
 
   <!-- MENU -->
-
-  <nav class="sidebar-menu">
+  <nav class="sidebar-menu" aria-label="Main navigation">
 
     <!-- DASHBOARD -->
-
     <a
       routerLink="/dashboard"
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="menu-item">
+      class="menu-item"
+      title="Dashboard">
 
-      <i class="bi bi-speedometer2"></i>
-
+      <i class="bi bi-speedometer2" aria-hidden="true"></i>
       <span>Dashboard</span>
 
     </a>
 
 
     <!-- IMPS OPERATIONS -->
-
     <div class="menu-title">
       IMPS OPERATIONS
     </div>
@@ -45,10 +41,10 @@
     <a
       routerLink="/transactions/new-transfer"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="New Transfer">
 
-      <i class="bi bi-arrow-left-right"></i>
-
+      <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
       <span>New Transfer</span>
 
     </a>
@@ -57,33 +53,34 @@
     <a
       routerLink="/transactions/bulk-upload"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Bulk Upload">
 
-      <i class="bi bi-upload"></i>
-
+      <i class="bi bi-upload" aria-hidden="true"></i>
       <span>Bulk Upload</span>
 
     </a>
 
 
-   <a
-  routerLink="/approvals/pending-approval"
-  routerLinkActive="active"
-  class="menu-item">
+    <a
+      routerLink="/approvals/pending-approval"
+      routerLinkActive="active"
+      class="menu-item"
+      title="Pending Approval">
 
-  <i class="bi bi-clock-history"></i>
+      <i class="bi bi-clock-history" aria-hidden="true"></i>
+      <span>Pending Approval</span>
 
-  <span>Pending Approval</span>
+    </a>
 
-</a>
 
     <a
       routerLink="/transactions/search"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Transaction Search">
 
-      <i class="bi bi-search"></i>
-
+      <i class="bi bi-search" aria-hidden="true"></i>
       <span>Transaction Search</span>
 
     </a>
@@ -92,10 +89,10 @@
     <a
       routerLink="/transactions/inbound"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Inbound">
 
-      <i class="bi bi-arrow-down-circle"></i>
-
+      <i class="bi bi-arrow-down-circle" aria-hidden="true"></i>
       <span>Inbound</span>
 
     </a>
@@ -104,10 +101,10 @@
     <a
       routerLink="/transactions/outbound"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Outbound">
 
-      <i class="bi bi-arrow-up-circle"></i>
-
+      <i class="bi bi-arrow-up-circle" aria-hidden="true"></i>
       <span>Outbound</span>
 
     </a>
@@ -116,10 +113,10 @@
     <a
       routerLink="/transactions/reversal"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Reversal">
 
-      <i class="bi bi-arrow-repeat"></i>
-
+      <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
       <span>Reversal</span>
 
     </a>
@@ -128,17 +125,16 @@
     <a
       routerLink="/transactions/exception-queue"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Exception Queue">
 
-      <i class="bi bi-exclamation-circle"></i>
-
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
       <span>Exception Queue</span>
 
     </a>
 
 
     <!-- ACCOUNTS -->
-
     <div class="menu-title">
       ACCOUNTS
     </div>
@@ -147,10 +143,10 @@
     <a
       routerLink="/accounts/balance-enquiry"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Balance Enquiry">
 
-      <i class="bi bi-wallet2"></i>
-
+      <i class="bi bi-wallet2" aria-hidden="true"></i>
       <span>Balance Enquiry</span>
 
     </a>
@@ -159,10 +155,10 @@
     <a
       routerLink="/accounts/mini-statement"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Mini Statement">
 
-      <i class="bi bi-file-earmark-text"></i>
-
+      <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
       <span>Mini Statement</span>
 
     </a>
@@ -171,17 +167,16 @@
     <a
       routerLink="/accounts/account-statement"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Account Statement">
 
-      <i class="bi bi-journal-text"></i>
-
+      <i class="bi bi-journal-text" aria-hidden="true"></i>
       <span>Account Statement</span>
 
     </a>
 
 
     <!-- BENEFICIARY -->
-
     <div class="menu-title">
       BENEFICIARY
     </div>
@@ -190,10 +185,10 @@
     <a
       routerLink="/beneficiary/list"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Beneficiary List">
 
-      <i class="bi bi-people"></i>
-
+      <i class="bi bi-people" aria-hidden="true"></i>
       <span>Beneficiary List</span>
 
     </a>
@@ -202,17 +197,16 @@
     <a
       routerLink="/beneficiary/add"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Add Beneficiary">
 
-      <i class="bi bi-person-plus"></i>
-
+      <i class="bi bi-person-plus" aria-hidden="true"></i>
       <span>Add Beneficiary</span>
 
     </a>
 
 
     <!-- REPORTS -->
-
     <div class="menu-title">
       REPORTS
     </div>
@@ -221,10 +215,10 @@
     <a
       routerLink="/reports/transactions"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Transaction Reports">
 
-      <i class="bi bi-bar-chart"></i>
-
+      <i class="bi bi-bar-chart" aria-hidden="true"></i>
       <span>Transaction Reports</span>
 
     </a>
@@ -233,10 +227,10 @@
     <a
       routerLink="/reports/settlement"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Settlement Reports">
 
-      <i class="bi bi-bank"></i>
-
+      <i class="bi bi-bank" aria-hidden="true"></i>
       <span>Settlement Reports</span>
 
     </a>
@@ -245,16 +239,16 @@
     <a
       routerLink="/reports/reconciliation"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Reconciliation">
 
-      <i class="bi bi-arrow-repeat"></i>
-
+      <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
       <span>Reconciliation</span>
 
     </a>
 
-    <!-- MONITORING -->
 
+    <!-- MONITORING -->
     <div class="menu-title">
       MONITORING
     </div>
@@ -263,10 +257,10 @@
     <a
       routerLink="/monitoring/api-logs"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="API Logs">
 
-      <i class="bi bi-terminal"></i>
-
+      <i class="bi bi-terminal" aria-hidden="true"></i>
       <span>API Logs</span>
 
     </a>
@@ -275,10 +269,10 @@
     <a
       routerLink="/monitoring/system-health"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="System Health">
 
-      <i class="bi bi-heart-pulse"></i>
-
+      <i class="bi bi-heart-pulse" aria-hidden="true"></i>
       <span>System Health</span>
 
     </a>
@@ -287,17 +281,16 @@
     <a
       routerLink="/monitoring/alerts"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Alerts">
 
-      <i class="bi bi-bell"></i>
-
+      <i class="bi bi-bell" aria-hidden="true"></i>
       <span>Alerts</span>
 
     </a>
 
 
     <!-- SETTINGS -->
-
     <div class="menu-title">
       SETTINGS
     </div>
@@ -306,10 +299,10 @@
     <a
       routerLink="/settings/users"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="User Management">
 
-      <i class="bi bi-person-gear"></i>
-
+      <i class="bi bi-person-gear" aria-hidden="true"></i>
       <span>User Management</span>
 
     </a>
@@ -318,10 +311,10 @@
     <a
       routerLink="/settings/roles"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="Role Management">
 
-      <i class="bi bi-shield-check"></i>
-
+      <i class="bi bi-shield-check" aria-hidden="true"></i>
       <span>Role Management</span>
 
     </a>
@@ -330,10 +323,10 @@
     <a
       routerLink="/settings/system"
       routerLinkActive="active"
-      class="menu-item">
+      class="menu-item"
+      title="System Settings">
 
-      <i class="bi bi-gear"></i>
-
+      <i class="bi bi-gear" aria-hidden="true"></i>
       <span>System Settings</span>
 
     </a>
@@ -342,7 +335,6 @@
 
 
   <!-- SIDEBAR BOTTOM -->
-
   <div class="sidebar-bottom">
 
     <div class="connection-status">

@@ -1,40 +1,137 @@
-import { Component } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  OnInit
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AuthService, LoggedInUser } from '../../services/auth.service';
+
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule
+  ],
   templateUrl: './header.html',
   styleUrl: './header.css'
 })
-export class Header {
-  showUserMenu = false;
-  showLogoutModal = false;
-  user: LoggedInUser | null = null;
+export class Header implements OnInit {
 
-  constructor(private auth: AuthService, private router: Router) {
-    this.user = this.auth.getUser();
+  profileOpen = false;
+  logoutModalOpen = false;
+
+  userName = 'Admin';
+  userRole = 'Operations';
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+
+    const user = this.authService.getUser();
+
+    if (user) {
+
+      this.userName =
+        user.name ||
+        user.full_name ||
+        user.employee_name ||
+        user.employee_id ||
+        'Admin';
+
+      this.userRole =
+        user.role ||
+        user.designation ||
+        'Operations';
+    }
   }
 
-  toggleUserMenu(): void {
-    this.showUserMenu = !this.showUserMenu;
+
+  toggleProfile(): void {
+
+    this.profileOpen = !this.profileOpen;
+
   }
 
-  openLogoutConfirmation(): void {
-    this.showUserMenu = false;
-    this.showLogoutModal = true;
+
+  @HostListener('document:click', ['$event'])
+  handleDocumentClick(event: MouseEvent): void {
+
+    const target = event.target as HTMLElement | null;
+
+    if (!target) {
+      return;
+    }
+
+    const clickedInsideProfile =
+      !!target.closest('.user-menu');
+
+    if (!clickedInsideProfile) {
+
+      this.profileOpen = false;
+
+    }
   }
 
-  cancelLogout(): void {
-    this.showLogoutModal = false;
+
+  openLogoutConfirmation(event?: MouseEvent): void {
+
+    event?.stopPropagation();
+
+    this.profileOpen = false;
+
+    this.logoutModalOpen = true;
   }
 
-  confirmLogout(): void {
-    this.auth.logout();
-    this.showLogoutModal = false;
+
+  cancelLogout(event?: MouseEvent): void {
+
+    event?.stopPropagation();
+
+    this.logoutModalOpen = false;
+  }
+
+
+  confirmLogout(event?: MouseEvent): void {
+
+    event?.stopPropagation();
+
+    this.logoutModalOpen = false;
+
+    this.profileOpen = false;
+
+    this.authService.logout();
+
     this.router.navigate(['/login']);
+  }
+
+
+  closeLogoutModalFromBackdrop(event: MouseEvent): void {
+
+    if (event.target === event.currentTarget) {
+
+      this.logoutModalOpen = false;
+
+    }
+  }
+
+
+  @HostListener('document:keydown.escape')
+  handleEscape(): void {
+
+    if (this.logoutModalOpen) {
+
+      this.logoutModalOpen = false;
+
+    } else if (this.profileOpen) {
+
+      this.profileOpen = false;
+
+    }
   }
 }
