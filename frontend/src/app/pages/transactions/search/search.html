@@ -37,67 +37,69 @@
 
   <!-- SEARCH FILTERS -->
   <div class="search-card">
-    <div class="form-group">
-      <label>Keyword / Account / Name</label>
-      <input
-        type="text"
-        [(ngModel)]="searchTerm"
-        (keyup.enter)="search()"
-        placeholder="Search any keyword...">
+    <div class="search-form-grid">
+      <div class="form-group">
+        <label>Keyword / Account / Name</label>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="search()"
+          placeholder="Search any keyword...">
+      </div>
+
+      <div class="form-group">
+        <label>Transaction ID</label>
+        <input
+          type="text"
+          [(ngModel)]="transactionId"
+          (keyup.enter)="search()"
+          placeholder="TXN...">
+      </div>
+
+      <div class="form-group">
+        <label>RRN</label>
+        <input
+          type="text"
+          [(ngModel)]="rrn"
+          (keyup.enter)="search()"
+          placeholder="RRN...">
+      </div>
+
+      <div class="form-group">
+        <label>Account Number</label>
+        <input
+          type="text"
+          [(ngModel)]="account"
+          (keyup.enter)="search()"
+          placeholder="Account No...">
+      </div>
+
+      <div class="form-group">
+        <label>Status</label>
+        <select [(ngModel)]="status" (ngModelChange)="onFilterChange()">
+          <option value="">All Statuses</option>
+          <option value="SUCCESS">Success</option>
+          <option value="FAILED">Failed</option>
+          <option value="PENDING">In Process (Pending)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Type</label>
+        <select [(ngModel)]="type" (ngModelChange)="onFilterChange()">
+          <option value="">All Types</option>
+          <option value="IMPS">IMPS</option>
+          <option value="UPI">UPI</option>
+        </select>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label>Transaction ID</label>
-      <input
-        type="text"
-        [(ngModel)]="transactionId"
-        (keyup.enter)="search()"
-        placeholder="TXN...">
-    </div>
-
-    <div class="form-group">
-      <label>RRN</label>
-      <input
-        type="text"
-        [(ngModel)]="rrn"
-        (keyup.enter)="search()"
-        placeholder="RRN...">
-    </div>
-
-    <div class="form-group">
-      <label>Account Number</label>
-      <input
-        type="text"
-        [(ngModel)]="account"
-        (keyup.enter)="search()"
-        placeholder="Account No...">
-    </div>
-
-    <div class="form-group">
-      <label>Status</label>
-      <select [(ngModel)]="status" (ngModelChange)="onFilterChange()">
-        <option value="">All Statuses</option>
-        <option value="SUCCESS">Success</option>
-        <option value="FAILED">Failed</option>
-        <option value="PENDING">In Process (Pending)</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Type</label>
-      <select [(ngModel)]="type" (ngModelChange)="onFilterChange()">
-        <option value="">All Types</option>
-        <option value="IMPS">IMPS</option>
-        <option value="UPI">UPI</option>
-      </select>
-    </div>
-
-    <div class="buttons">
+    <div class="search-actions">
+      <button class="clear-btn" type="button" (click)="clear()">
+        <i class="bi bi-arrow-counterclockwise"></i> Reset
+      </button>
       <button class="search-btn" type="button" (click)="search()">
         <i class="bi bi-search"></i> Search
-      </button>
-      <button class="clear-btn" type="button" (click)="clear()">
-        <i class="bi bi-x-circle"></i> Reset
       </button>
     </div>
   </div>
