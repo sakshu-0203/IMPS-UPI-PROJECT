@@ -16,7 +16,8 @@
     <div class="header-divider"></div>
 
     <div class="user-menu-wrapper">
-      <button type="button" class="user-section" (click)="toggleUserMenu()" aria-haspopup="menu" [attr.aria-expanded]="showUserMenu">
+      <button type="button" class="user-section" (click)="toggleUserMenu()" aria-haspopup="menu"
+        [attr.aria-expanded]="showUserMenu">
         <div class="user-avatar">{{ (user?.employeeName || 'A').charAt(0).toUpperCase() }}</div>
         <div class="user-details">
           <strong>{{ user?.employeeName || 'Admin' }}</strong>
@@ -26,30 +27,31 @@
       </button>
 
       @if (showUserMenu) {
-        <div class="user-dropdown" role="menu">
-          <div class="user-dropdown-info">
-            <strong>{{ user?.employeeName || 'Admin' }}</strong>
-            <span>{{ user?.employeeId || '' }} · {{ user?.role || 'Operations' }}</span>
-          </div>
-          <button type="button" class="logout-menu-button" (click)="openLogoutConfirmation()">
-            <i class="bi bi-box-arrow-right"></i> Logout
-          </button>
+      <div class="user-dropdown" role="menu">
+        <div class="user-dropdown-info">
+          <strong>{{ user?.employeeName || 'Admin' }}</strong>
+          <span>{{ user?.employeeId || '' }} · {{ user?.role || 'Operations' }}</span>
         </div>
+        <button type="button" class="logout-menu-button" (click)="openLogoutConfirmation()">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </div>
       }
     </div>
   </div>
 
   @if (showLogoutModal) {
-    <div class="logout-overlay" role="presentation" (click)="cancelLogout()">
-      <div class="logout-modal" role="dialog" aria-modal="true" aria-labelledby="logout-title" (click)="$event.stopPropagation()">
-        <div class="logout-icon"><i class="bi bi-box-arrow-right"></i></div>
-        <h3 id="logout-title">Are you sure you want to logout?</h3>
-        <p>Your current session will be cleared and you will be redirected to the Login page.</p>
-        <div class="logout-actions">
-          <button type="button" class="cancel-button" (click)="cancelLogout()">Cancel</button>
-          <button type="button" class="confirm-logout-button" (click)="confirmLogout()">Logout</button>
-        </div>
+  <div class="logout-overlay" role="presentation" (click)="cancelLogout()">
+    <div class="logout-modal" role="dialog" aria-modal="true" aria-labelledby="logout-title"
+      (click)="$event.stopPropagation()">
+      <div class="logout-icon"><i class="bi bi-box-arrow-right"></i></div>
+      <h3 id="logout-title">Are you sure you want to logout?</h3>
+      <p>Your current session will be cleared and you will be redirected to the Login page.</p>
+      <div class="logout-actions">
+        <button type="button" class="cancel-button" (click)="cancelLogout()">Cancel</button>
+        <button type="button" class="confirm-logout-button" (click)="confirmLogout()">Logout</button>
       </div>
     </div>
+  </div>
   }
 </header>
