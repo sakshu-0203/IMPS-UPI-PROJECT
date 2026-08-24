@@ -1,445 +1,410 @@
 <div class="transfer-page">
 
   <!-- PAGE HEADER -->
-
   <div class="page-header">
-
     <div>
       <h1>New IMPS Transfer</h1>
-
-      <p>
-        Initiate a new domestic instant money transfer
-      </p>
+      <p>Initiate a new domestic instant money transfer with maker-checker security</p>
     </div>
 
     <div class="transaction-type">
-      <i class="bi bi-lightning-charge"></i>
-      IMPS
+      <i class="bi bi-lightning-charge-fill"></i>
+      IMPS Instant Transfer
     </div>
-
   </div>
 
-
-  <!-- ERROR -->
-
+  <!-- ERROR ALERT -->
   @if (errorMessage) {
-
-    <div class="message error-message">
-      <i class="bi bi-exclamation-circle"></i>
-
+    <div class="message error-message" role="alert">
+      <i class="bi bi-exclamation-circle-fill"></i>
       <span>{{ errorMessage }}</span>
     </div>
-
   }
 
-
-  <!-- SUCCESS -->
-
-  @if (successMessage) {
-
-    <div class="message success-message">
-      <i class="bi bi-check-circle"></i>
-
+  <!-- SUCCESS ALERT -->
+  @if (successMessage && !showSuccessModal) {
+    <div class="message success-message" role="status">
+      <i class="bi bi-check-circle-fill"></i>
       <span>{{ successMessage }}</span>
     </div>
-
   }
-
 
   <div class="transfer-grid">
 
     <!-- FORM -->
-
     <section class="form-card">
-
       <div class="card-header">
-
         <div>
           <h2>Transfer Details</h2>
-
-          <p>
-            Enter the beneficiary and payment information
-          </p>
+          <p>Enter the sender, beneficiary, and payment information</p>
         </div>
-
       </div>
-
 
       <form (ngSubmit)="submitTransfer()">
 
-
         <!-- DEBIT ACCOUNT -->
-
         <div class="form-group">
-
-          <label>
-            Debit Account
-            <span>*</span>
+          <label for="debitAccountSelect">
+            Debit Account <span>*</span>
           </label>
 
           <select
+            id="debitAccountSelect"
             [(ngModel)]="debitAccount"
-            name="debitAccount">
-
-            <option value="">
-              Select debit account
-            </option>
-
-            <option value="123456789012">
-              XXXXXX4582 — Savings
-            </option>
-
-            <option value="123456789013">
-              XXXXXX7821 — Current
-            </option>
-
+            (change)="onAccountChange()"
+            name="debitAccount"
+            [class.input-error]="fieldErrors['debitAccount']">
+            <option value="">-- Select Source Debit Account --</option>
+            @for (acc of accounts; track acc.account_number) {
+              <option [value]="acc.account_number">
+                {{ acc.account_number }} — {{ acc.customer_name || 'Account' }} ({{ acc.account_type || 'Savings' }}) — ₹{{ formatNumber(+acc.balance!) }}
+              </option>
+            }
           </select>
-          @if (fieldErrors['debitAccount']) { <small class="field-error">{{ fieldErrors['debitAccount'] }}</small> }
 
+          @if (selectedAccount) {
+            <div class="account-balance-pill">
+              <i class="bi bi-wallet2"></i>
+              <span>Available Balance: <strong>₹ {{ formatNumber(+selectedAccount.balance!) }}</strong></span>
+              <span class="branch-tag">Branch: {{ selectedAccount.branch_code || 'BR001' }}</span>
+            </div>
+          }
+
+          @if (fieldErrors['debitAccount']) {
+            <small class="field-error">{{ fieldErrors['debitAccount'] }}</small>
+          }
         </div>
 
-
-        <!-- BENEFICIARY -->
-
-        <div class="section-title">
-          Beneficiary Information
+        <!-- BENEFICIARY SECTION -->
+        <div class="section-title-wrapper">
+          <div class="section-title">Beneficiary Information</div>
+          @if (beneficiaries.length > 0) {
+            <div class="beneficiary-quick-select">
+              <label for="savedBeneficiarySelect">Quick Fill:</label>
+              <select
+                id="savedBeneficiarySelect"
+                [(ngModel)]="selectedBeneficiaryId"
+                (change)="onBeneficiarySelect()"
+                name="savedBeneficiary">
+                <option value="">-- Select Saved Beneficiary --</option>
+                @for (b of beneficiaries; track b.id || b.account_number) {
+                  <option [value]="b.id || b.account_number">
+                    {{ b.customer_name }} ({{ b.account_number }}) - {{ b.ifsc_code }}
+                  </option>
+                }
+              </select>
+            </div>
+          }
         </div>
-
 
         <div class="form-row">
-
           <div class="form-group">
-
-            <label>
-              Beneficiary Name
-              <span>*</span>
+            <label for="beneficiaryName">
+              Beneficiary Name <span>*</span>
             </label>
-
             <input
+              id="beneficiaryName"
               type="text"
               [(ngModel)]="beneficiaryName"
               name="beneficiaryName"
-              placeholder="Enter beneficiary name"
-              required
+              placeholder="e.g. Ramesh Kumar"
               maxlength="100"
+              [class.input-error]="fieldErrors['beneficiaryName']"
             />
-            @if (fieldErrors['beneficiaryName']) { <small class="field-error">{{ fieldErrors['beneficiaryName'] }}</small> }
-
+            @if (fieldErrors['beneficiaryName']) {
+              <small class="field-error">{{ fieldErrors['beneficiaryName'] }}</small>
+            }
           </div>
 
-
           <div class="form-group">
-
-            <label>
-              Beneficiary Account
-              <span>*</span>
+            <label for="beneficiaryAccount">
+              Beneficiary Account Number <span>*</span>
             </label>
-
             <input
+              id="beneficiaryAccount"
               type="text"
               [(ngModel)]="beneficiaryAccount"
               name="beneficiaryAccount"
-              placeholder="Enter account number"
-              required
+              placeholder="9 to 18 digit account number"
               minlength="9"
               maxlength="18"
+              [class.input-error]="fieldErrors['beneficiaryAccount']"
             />
-            @if (fieldErrors['beneficiaryAccount']) { <small class="field-error">{{ fieldErrors['beneficiaryAccount'] }}</small> }
-
+            @if (fieldErrors['beneficiaryAccount']) {
+              <small class="field-error">{{ fieldErrors['beneficiaryAccount'] }}</small>
+            }
           </div>
-
         </div>
 
-
         <div class="form-row">
-
           <div class="form-group">
-
-            <label>
-              IFSC Code
-              <span>*</span>
+            <label for="ifscCode">
+              IFSC Code <span>*</span>
             </label>
-
             <input
+              id="ifscCode"
               type="text"
               [(ngModel)]="ifscCode"
+              (ngModelChange)="ifscCode = ifscCode.toUpperCase()"
               name="ifscCode"
-              placeholder="Example: ABCD0123456"
-              required
+              placeholder="e.g. SBIN0001234"
               minlength="11"
               maxlength="11"
+              [class.input-error]="fieldErrors['ifscCode']"
             />
-            @if (fieldErrors['ifscCode']) { <small class="field-error">{{ fieldErrors['ifscCode'] }}</small> }
-
+            @if (fieldErrors['ifscCode']) {
+              <small class="field-error">{{ fieldErrors['ifscCode'] }}</small>
+            }
           </div>
-
 
           <div class="form-group">
-
-            <label>
-              Transfer Purpose
-              <span>*</span>
+            <label for="purpose">
+              Transfer Purpose <span>*</span>
             </label>
-
             <select
+              id="purpose"
               [(ngModel)]="purpose"
-              name="purpose">
-
-              <option value="">
-                Select purpose
-              </option>
-
-              <option value="Personal">
-                Personal
-              </option>
-
-              <option value="Education">
-                Education
-              </option>
-
-              <option value="Medical">
-                Medical
-              </option>
-
-              <option value="Business">
-                Business
-              </option>
-
-              <option value="Other">
-                Other
-              </option>
-
+              name="purpose"
+              [class.input-error]="fieldErrors['purpose']">
+              <option value="Personal">Personal Transfer</option>
+              <option value="Education">Education Fee</option>
+              <option value="Medical">Medical / Hospital</option>
+              <option value="Business">Vendor / Business Payment</option>
+              <option value="Other">Other Purpose</option>
             </select>
-            @if (fieldErrors['purpose']) { <small class="field-error">{{ fieldErrors['purpose'] }}</small> }
-
+            @if (fieldErrors['purpose']) {
+              <small class="field-error">{{ fieldErrors['purpose'] }}</small>
+            }
           </div>
-
         </div>
-
 
         <!-- PAYMENT -->
-
-        <div class="section-title">
-          Payment Information
-        </div>
-
+        <div class="section-title">Payment Amount</div>
 
         <div class="form-row">
-
           <div class="form-group">
-
-            <label>
-              Transfer Amount
-              <span>*</span>
+            <label for="amountInput">
+              Transfer Amount <span>*</span>
             </label>
-
-            <div class="amount-input">
-
+            <div class="amount-input" [class.input-error]="fieldErrors['amount']">
               <span>₹</span>
-
               <input
+                id="amountInput"
                 type="number"
                 [(ngModel)]="amount"
                 name="amount"
                 min="1"
-                placeholder="0.00"
-                required
-                min="1"
                 max="500000"
                 step="0.01"
+                placeholder="0.00"
               />
-              @if (fieldErrors['amount']) { <small class="field-error">{{ fieldErrors['amount'] }}</small> }
-
             </div>
-
+            @if (fieldErrors['amount']) {
+              <small class="field-error">{{ fieldErrors['amount'] }}</small>
+            }
           </div>
-
 
           <div class="form-group">
-
-            <label>
-              Charges
-            </label>
-
+            <label>Service Charges</label>
             <input
               type="text"
-              value="Calculated by system"
+              value="₹ 0.00 (Free IMPS)"
               disabled
             />
-
+            <small class="charge-hint">Standard bank charges waived for instant settlement</small>
           </div>
-
         </div>
-
 
         <!-- REMARKS -->
-
         <div class="form-group">
-
-          <label>
-            Transaction Remarks
-          </label>
-
+          <label for="remarks">Transaction Remarks (Optional)</label>
           <textarea
+            id="remarks"
             [(ngModel)]="remarks"
             name="remarks"
-            rows="3"
+            rows="2"
             maxlength="200"
-            placeholder="Enter transaction remarks">
+            placeholder="e.g. Monthly rent, invoice #104, gift"
+            [class.input-error]="fieldErrors['remarks']">
           </textarea>
-          @if (fieldErrors['remarks']) { <small class="field-error">{{ fieldErrors['remarks'] }}</small> }
-
+          @if (fieldErrors['remarks']) {
+            <small class="field-error">{{ fieldErrors['remarks'] }}</small>
+          }
         </div>
 
-
         <!-- ACTIONS -->
-
         <div class="form-actions">
-
           <button
             type="button"
             class="btn-secondary"
-            (click)="resetForm()">
-
+            (click)="resetForm()"
+            [disabled]="loading">
             <i class="bi bi-arrow-counterclockwise"></i>
-
             Reset
-
           </button>
 
-
-         <button
-  type="submit"
-  class="btn-primary"
-  [disabled]="loading">
-
-  <i
-    class="bi"
-    [class.bi-arrow-right-circle]="!loading"
-    [class.bi-hourglass-split]="loading">
-  </i>
-
-  {{ loading ? 'Processing...' : 'Continue' }}
-
-</button>
-
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="loading">
+            @if (loading) {
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span>Processing Transfer...</span>
+            } @else {
+              <i class="bi bi-send-check"></i>
+              <span>Initiate Transfer</span>
+            }
+          </button>
         </div>
 
       </form>
-
     </section>
 
-
-    <!-- SUMMARY -->
-
+    <!-- SUMMARY CARD -->
     <aside class="summary-card">
-
       <div class="summary-header">
-
         <i class="bi bi-receipt"></i>
-
         <div>
           <h2>Transfer Summary</h2>
-
-          <p>
-            Review before submission
-          </p>
+          <p>Real-time review before initiating</p>
         </div>
-
       </div>
 
-
       <div class="summary-row">
-
         <span>Transfer Type</span>
-
-        <strong>IMPS</strong>
-
+        <strong>IMPS Instant</strong>
       </div>
 
-
       <div class="summary-row">
-
         <span>Debit Account</span>
-
-        <strong>
-          {{ debitAccount || 'Not selected' }}
-        </strong>
-
+        <strong>{{ debitAccount || 'Not selected' }}</strong>
       </div>
 
-
       <div class="summary-row">
-
         <span>Beneficiary</span>
-
-        <strong>
-          {{ beneficiaryName || 'Not entered' }}
-        </strong>
-
+        <strong>{{ beneficiaryName || 'Not entered' }}</strong>
       </div>
 
-
       <div class="summary-row">
-
-        <span>Account Number</span>
-
-        <strong>
-          {{ beneficiaryAccount || 'Not entered' }}
-        </strong>
-
+        <span>Beneficiary Account</span>
+        <strong>{{ beneficiaryAccount || 'Not entered' }}</strong>
       </div>
 
-
       <div class="summary-row">
-
         <span>IFSC</span>
-
-        <strong>
-          {{ ifscCode || 'Not entered' }}
-        </strong>
-
+        <strong>{{ ifscCode || 'Not entered' }}</strong>
       </div>
-
 
       <div class="summary-row">
-
         <span>Purpose</span>
-
-        <strong>
-          {{ purpose || 'Not selected' }}
-        </strong>
-
+        <strong>{{ purpose || 'Personal' }}</strong>
       </div>
-
 
       <div class="summary-divider"></div>
 
-
       <div class="amount-summary">
-
         <span>Transfer Amount</span>
-
-        <strong>
-          ₹ {{ amount || '0.00' }}
-        </strong>
-
+        <strong>₹ {{ formatNumber(amount || 0) }}</strong>
       </div>
-
 
       <div class="security-note">
-
         <i class="bi bi-shield-check"></i>
-
         <span>
-          Transaction will be processed through
-          the secure banking network.
+          Secured with 256-bit banking grade encryption & Maker-Checker workflow.
         </span>
-
       </div>
-
     </aside>
 
   </div>
+
+  <!-- SUCCESS CONFIRMATION MODAL -->
+  @if (showSuccessModal && lastTransactionResult) {
+    <div class="modal-backdrop" (click)="closeSuccessModal()" role="presentation">
+      <div class="receipt-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+
+        <div class="receipt-header-banner">
+          <div class="success-icon-badge in-process-badge">
+            <i class="bi bi-hourglass-split"></i>
+          </div>
+          <h3>Transfer Submitted (In Process)</h3>
+          <p>Transaction has been registered and sent to the Approvals tab for Checker approval.</p>
+        </div>
+
+        <div class="receipt-body">
+          <div class="receipt-amount-block">
+            <span class="amount-label">Transfer Amount</span>
+            <div class="amount-display">₹ {{ formatNumber(lastTransactionResult.amount) }}</div>
+            <span class="status-pill in-process">
+              <i class="bi bi-hourglass-split"></i> In Process · Pending Approval
+            </span>
+          </div>
+
+          <div class="approval-notice">
+            <i class="bi bi-shield-check"></i>
+            <span>Funds will be debited from sender account once approved by Checker in the <strong>Pending Approvals</strong> tab.</span>
+          </div>
+
+          <div class="receipt-grid">
+            <div class="receipt-grid-item">
+              <span class="item-label">Transaction ID</span>
+              <div class="item-value id-val">
+                <span>{{ lastTransactionResult.transactionId }}</span>
+                <button type="button" class="btn-copy" (click)="copyTxnId()">
+                  <i class="bi" [class.bi-clipboard]="!copiedTxnId" [class.bi-check-lg]="copiedTxnId"></i>
+                  {{ copiedTxnId ? 'Copied' : 'Copy' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="receipt-grid-item">
+              <span class="item-label">RRN (Reference No)</span>
+              <span class="item-value">{{ lastTransactionResult.rrn }}</span>
+            </div>
+
+            <div class="receipt-grid-item">
+              <span class="item-label">Debit Account</span>
+              <span class="item-value">{{ lastTransactionResult.senderAccount }} ({{ lastTransactionResult.senderName }})</span>
+            </div>
+
+            <div class="receipt-grid-item">
+              <span class="item-label">Beneficiary</span>
+              <span class="item-value">{{ lastTransactionResult.beneficiaryName }}</span>
+            </div>
+
+            <div class="receipt-grid-item">
+              <span class="item-label">Beneficiary Account & IFSC</span>
+              <span class="item-value">{{ lastTransactionResult.beneficiaryAccount }} · {{ lastTransactionResult.beneficiaryIfsc }}</span>
+            </div>
+
+            <div class="receipt-grid-item">
+              <span class="item-label">Status</span>
+              <span class="item-value text-amber">In Process (Awaiting Approval)</span>
+            </div>
+
+            <div class="receipt-grid-item full-width">
+              <span class="item-label">Date & Time</span>
+              <span class="item-value">{{ lastTransactionResult.date | date:'dd MMM yyyy, hh:mm a' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="receipt-footer">
+          <button type="button" class="btn-receipt-action btn-primary" (click)="goToPendingApprovals()">
+            <i class="bi bi-shield-check"></i> Go to Approvals Tab
+          </button>
+          <button type="button" class="btn-receipt-action btn-secondary" (click)="initiateAnotherTransfer()">
+            <i class="bi bi-plus-circle"></i> New Transfer
+          </button>
+          <button type="button" class="btn-receipt-action btn-outline" (click)="goToOutbound()">
+            <i class="bi bi-list-ul"></i> Outbound Logs
+          </button>
+          <button type="button" class="btn-receipt-action btn-outline" (click)="goToDashboard()">
+            <i class="bi bi-grid"></i> Dashboard
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
 
 </div>
