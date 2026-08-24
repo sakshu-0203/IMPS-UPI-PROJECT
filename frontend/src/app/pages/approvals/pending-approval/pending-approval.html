@@ -282,4 +282,89 @@
 
   }
 
+  <!-- PAYMENT SUCCESSFUL MODAL -->
+  @if (showSuccessModal && approvedReceipt) {
+    <div class="modal-backdrop" (click)="closeSuccessModal()" role="presentation">
+      <div class="receipt-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+
+        <div class="receipt-header-banner">
+          <div class="success-icon-badge">
+            <i class="bi bi-check-circle-fill"></i>
+          </div>
+          <h3>Payment Successful!</h3>
+          <p>Transaction has been approved and funds settled.</p>
+        </div>
+
+        <div class="receipt-body">
+          <div class="receipt-amount-block">
+            <span class="amount-label">Amount Transferred</span>
+            <div class="amount-display">₹ {{ formatAmount(approvedReceipt.amount) }}</div>
+            <span class="status-pill success">
+              <i class="bi bi-check-circle-fill"></i> APPROVED & SETTLED
+            </span>
+          </div>
+
+          <div class="receipt-grid">
+            <div class="receipt-grid-item">
+              <span class="item-label">Transaction ID</span>
+              <div class="item-value id-val">
+                <span>{{ approvedReceipt.transactionId }}</span>
+                <button type="button" class="btn-copy" (click)="copyTxnId()">
+                  <i class="bi" [class.bi-clipboard]="!copiedTxnId" [class.bi-check-lg]="copiedTxnId"></i>
+                  {{ copiedTxnId ? 'Copied' : 'Copy' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="receipt-grid-item">
+              <span class="item-label">RRN (Reference No)</span>
+              <span class="item-value">{{ approvedReceipt.rrn }}</span>
+            </div>
+
+            <div class="receipt-grid-item">
+              <span class="item-label">Debited Account</span>
+              <span class="item-value">{{ approvedReceipt.senderAccount }} ({{ approvedReceipt.senderName }})</span>
+            </div>
+
+            <div class="receipt-grid-item">
+              <span class="item-label">Beneficiary</span>
+              <span class="item-value">{{ approvedReceipt.beneficiaryName }}</span>
+            </div>
+
+            <div class="receipt-grid-item">
+              <span class="item-label">Beneficiary Account & IFSC</span>
+              <span class="item-value">{{ approvedReceipt.beneficiaryAccount }} · {{ approvedReceipt.beneficiaryIfsc }}</span>
+            </div>
+
+            <div class="receipt-grid-item">
+              <span class="item-label">Approved By</span>
+              <span class="item-value">{{ approvedReceipt.approvedBy }}</span>
+            </div>
+
+            <div class="receipt-grid-item full-width">
+              <span class="item-label">Approval Date & Time</span>
+              <span class="item-value">{{ approvedReceipt.date | date:'dd MMM yyyy, hh:mm a' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="receipt-footer">
+          <button type="button" class="btn-receipt-action btn-primary" (click)="closeSuccessModal()">
+            <i class="bi bi-check2"></i> Done
+          </button>
+          <button type="button" class="btn-receipt-action btn-secondary" (click)="goToSearch()">
+            <i class="bi bi-search"></i> Search Transactions
+          </button>
+          <button type="button" class="btn-receipt-action btn-outline" (click)="goToOutbound()">
+            <i class="bi bi-list-ul"></i> Outbound Logs
+          </button>
+          <button type="button" class="btn-receipt-action btn-outline" (click)="goToDashboard()">
+            <i class="bi bi-grid"></i> Dashboard
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
 </div>

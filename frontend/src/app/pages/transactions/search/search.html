@@ -1,312 +1,307 @@
 <div class="search-page">
 
   <div class="page-header">
-
     <div>
-
-      <h1>Transaction Search</h1>
-
-      <p>
-        Search and monitor IMPS transactions
-      </p>
-
+      <h1>Transaction Search & Monitor</h1>
+      <p>Search, filter, and monitor all IMPS and UPI transactions in real-time</p>
     </div>
 
+    <button type="button" class="refresh-btn" (click)="search()" [disabled]="loading">
+      <i class="bi bi-arrow-clockwise" [class.spin]="loading"></i>
+      {{ loading ? 'Loading...' : 'Refresh Data' }}
+    </button>
   </div>
 
+  <!-- STATUS SUMMARY PILLS -->
+  <div class="status-summary-cards">
+    <button type="button" class="stat-pill-btn" [class.active]="status === ''" (click)="setStatusFilter('')">
+      <span class="stat-name">All Transactions</span>
+      <strong class="stat-count">{{ totalCount }}</strong>
+    </button>
+
+    <button type="button" class="stat-pill-btn success-pill" [class.active]="status === 'SUCCESS'" (click)="setStatusFilter('SUCCESS')">
+      <span class="stat-name"><i class="bi bi-check-circle-fill"></i> Successful</span>
+      <strong class="stat-count">{{ successCount }}</strong>
+    </button>
+
+    <button type="button" class="stat-pill-btn failed-pill" [class.active]="status === 'FAILED'" (click)="setStatusFilter('FAILED')">
+      <span class="stat-name"><i class="bi bi-x-circle-fill"></i> Failed / Rejected</span>
+      <strong class="stat-count">{{ failedCount }}</strong>
+    </button>
+
+    <button type="button" class="stat-pill-btn pending-pill" [class.active]="status === 'PENDING'" (click)="setStatusFilter('PENDING')">
+      <span class="stat-name"><i class="bi bi-hourglass-split"></i> In Process / Pending</span>
+      <strong class="stat-count">{{ pendingCount }}</strong>
+    </button>
+  </div>
 
   <!-- SEARCH FILTERS -->
-
   <div class="search-card">
+    <div class="form-group">
+      <label>Keyword / Account / Name</label>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="search()"
+        placeholder="Search any keyword...">
+    </div>
 
     <div class="form-group">
-
       <label>Transaction ID</label>
-
       <input
         type="text"
         [(ngModel)]="transactionId"
-        placeholder="Enter Transaction ID">
-
+        (keyup.enter)="search()"
+        placeholder="TXN...">
     </div>
 
-
     <div class="form-group">
-
       <label>RRN</label>
-
       <input
         type="text"
         [(ngModel)]="rrn"
-        placeholder="Enter RRN">
-
+        (keyup.enter)="search()"
+        placeholder="RRN...">
     </div>
 
-
     <div class="form-group">
-
       <label>Account Number</label>
-
       <input
         type="text"
         [(ngModel)]="account"
-        placeholder="Enter account number">
-
+        (keyup.enter)="search()"
+        placeholder="Account No...">
     </div>
 
-
     <div class="form-group">
-
-      <label>Mobile Number</label>
-
-      <input
-        type="text"
-        [(ngModel)]="mobile"
-        placeholder="Enter mobile number">
-
-    </div>
-
-
-    <div class="form-group">
-
       <label>Status</label>
-
-      <select [(ngModel)]="status">
-
-        <option value="">
-          All Status
-        </option>
-
-        <option value="PENDING">
-          Pending
-        </option>
-
-        <option value="SUCCESS">
-          Success
-        </option>
-
-        <option value="FAILED">
-          Failed
-        </option>
-
+      <select [(ngModel)]="status" (ngModelChange)="onFilterChange()">
+        <option value="">All Statuses</option>
+        <option value="SUCCESS">Success</option>
+        <option value="FAILED">Failed</option>
+        <option value="PENDING">In Process (Pending)</option>
       </select>
-
     </div>
 
+    <div class="form-group">
+      <label>Type</label>
+      <select [(ngModel)]="type" (ngModelChange)="onFilterChange()">
+        <option value="">All Types</option>
+        <option value="IMPS">IMPS</option>
+        <option value="UPI">UPI</option>
+      </select>
+    </div>
 
     <div class="buttons">
-
-      <button
-        class="search-btn"
-        type="button"
-        (click)="search()">
-
-        Search
-
+      <button class="search-btn" type="button" (click)="search()">
+        <i class="bi bi-search"></i> Search
       </button>
-
-
-      <button
-        class="clear-btn"
-        type="button"
-        (click)="clear()">
-
-        Clear
-
+      <button class="clear-btn" type="button" (click)="clear()">
+        <i class="bi bi-x-circle"></i> Reset
       </button>
-
     </div>
-
   </div>
-
 
   <!-- ERROR -->
+  @if (errorMessage) {
+    <div class="error">
+      <i class="bi bi-exclamation-circle"></i>
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
 
-  <div
-    class="error"
-    *ngIf="errorMessage">
-
-    {{ errorMessage }}
-
-  </div>
-
-
-  <!-- LOADING -->
-
-  <div
-    class="loading"
-    *ngIf="loading">
-
-    Searching transactions...
-
-  </div>
-
-
-  <!-- RESULT -->
-
-  <div
-    class="result-card"
-    *ngIf="
-      !loading &&
-      searched
-    ">
-
+  <!-- RESULT CARD -->
+  <div class="result-card">
     <div class="result-header">
+      <div>
+        <h2>Transactions List</h2>
+        <p>Showing {{ transactions.length }} transaction(s)</p>
+      </div>
 
-      <h2>Search Results</h2>
-
-      <span>
-
-        {{ transactions.length }}
-        transaction(s)
-
-      </span>
-
+      @if (loading) {
+        <span class="refreshing-text"><i class="bi bi-arrow-repeat spin"></i> Loading data...</span>
+      }
     </div>
 
-
-    <div
-      class="no-result"
-      *ngIf="
-        transactions.length === 0
-      ">
-
-      No transactions found.
-
-    </div>
-
-
-    <div
-      class="table-wrapper"
-      *ngIf="
-        transactions.length > 0
-      ">
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>Transaction ID</th>
-
-            <th>RRN</th>
-
-            <th>Type</th>
-
-            <th>Direction</th>
-
-            <th>Sender</th>
-
-            <th>Beneficiary</th>
-
-            <th>Amount</th>
-
-            <th>Status</th>
-
-            <th>Date</th>
-
-          </tr>
-
-        </thead>
-
-
-        <tbody>
-
-          <tr
-            *ngFor="
-              let transaction of transactions
-            ">
-
-            <td class="transaction-id">
-
-              {{ transaction.transaction_id }}
-
-            </td>
-
-
-            <td>
-
-              {{ transaction.rrn || '-' }}
-
-            </td>
-
-
-            <td>
-
-              {{ transaction.transaction_type || '-' }}
-
-            </td>
-
-
-            <td>
-
-              {{ transaction.direction || '-' }}
-
-            </td>
-
-
-            <td>
-
-              {{ transaction.sender_account || '-' }}
-
-            </td>
-
-
-            <td>
-
-              {{ transaction.beneficiary_account || '-' }}
-
-            </td>
-
-
-            <td class="amount">
-
-              ₹{{ formatAmount(transaction.amount) }}
-
-            </td>
-
-
-            <td>
-
-              <span
-                class="status"
-                [class.pending]="
-                  transaction.transaction_status === 'PENDING'
-                "
-                [class.success]="
-                  transaction.transaction_status === 'SUCCESS'
-                "
-                [class.failed]="
-                  transaction.transaction_status === 'FAILED'
-                ">
-
-                {{
-                  transaction.transaction_status
-                }}
-
-              </span>
-
-            </td>
-
-
-            <td>
-
-              {{
-                transaction.transaction_date
-                  | date:'dd-MM-yyyy HH:mm'
-              }}
-
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
+    @if (!loading && transactions.length === 0) {
+      <div class="no-result">
+        <i class="bi bi-inbox"></i>
+        <p>No transactions found matching the selected criteria.</p>
+        <button type="button" class="clear-btn" (click)="clear()">Reset Filters</button>
+      </div>
+    }
+
+    @if (transactions.length > 0) {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Transaction ID</th>
+              <th>RRN</th>
+              <th>Type</th>
+              <th>Sender</th>
+              <th>Beneficiary</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date & Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (tx of transactions; track tx.transaction_id || tx.id) {
+              <tr>
+                <td class="transaction-id">
+                  <strong>{{ tx.transaction_id }}</strong>
+                </td>
+
+                <td>
+                  {{ tx.rrn || '-' }}
+                </td>
+
+                <td>
+                  <span class="type-tag" [class.upi]="tx.transaction_type === 'UPI'">
+                    {{ tx.transaction_type || 'IMPS' }}
+                  </span>
+                </td>
+
+                <td>
+                  <div class="party-info">
+                    <strong>{{ tx.sender_account }}</strong>
+                    <small>{{ tx.sender_name || 'Customer' }}</small>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="party-info">
+                    <strong>{{ tx.beneficiary_account }}</strong>
+                    <small>{{ tx.beneficiary_name || 'Beneficiary' }}</small>
+                  </div>
+                </td>
+
+                <td class="amount">
+                  ₹{{ formatAmount(tx.amount) }}
+                </td>
+
+                <td>
+                  <span
+                    class="status-pill"
+                    [class.success]="tx.transaction_status === 'SUCCESS'"
+                    [class.failed]="tx.transaction_status === 'FAILED'"
+                    [class.pending]="tx.transaction_status === 'PENDING' || tx.transaction_status === 'IN PROCESS'">
+                    @if (tx.transaction_status === 'SUCCESS') {
+                      <i class="bi bi-check-circle-fill"></i> Success
+                    } @else if (tx.transaction_status === 'FAILED') {
+                      <i class="bi bi-x-circle-fill"></i> Failed
+                    } @else {
+                      <i class="bi bi-hourglass-split"></i> In Process
+                    }
+                  </span>
+                </td>
+
+                <td class="date-col">
+                  {{ tx.transaction_date | date:'dd-MM-yyyy HH:mm' }}
+                </td>
+
+                <td>
+                  <button type="button" class="details-btn" (click)="viewDetails(tx)" title="View Transaction Details">
+                    <i class="bi bi-eye"></i> Details
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </div>
+
+  <!-- TRANSACTION DETAILS MODAL -->
+  @if (selectedTransaction) {
+    <div class="modal-backdrop" (click)="closeDetailsModal()" role="presentation">
+      <div class="details-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+
+        <div class="details-modal-header" [class.success]="selectedTransaction.transaction_status === 'SUCCESS'" [class.failed]="selectedTransaction.transaction_status === 'FAILED'">
+          <div class="modal-title-row">
+            <h3>Transaction Details</h3>
+            <button type="button" class="btn-modal-close" (click)="closeDetailsModal()">&times;</button>
+          </div>
+          <p>{{ selectedTransaction.transaction_id }}</p>
+        </div>
+
+        <div class="details-modal-body">
+          <div class="amount-banner">
+            <span class="label">Amount</span>
+            <div class="val">₹ {{ formatAmount(selectedTransaction.amount) }}</div>
+            <span
+              class="status-pill"
+              [class.success]="selectedTransaction.transaction_status === 'SUCCESS'"
+              [class.failed]="selectedTransaction.transaction_status === 'FAILED'"
+              [class.pending]="selectedTransaction.transaction_status === 'PENDING' || selectedTransaction.transaction_status === 'IN PROCESS'">
+              {{ selectedTransaction.transaction_status }}
+            </span>
+          </div>
+
+          <div class="details-grid">
+            <div class="grid-item">
+              <span class="k">Transaction ID</span>
+              <div class="v id-copy">
+                <span>{{ selectedTransaction.transaction_id }}</span>
+                <button type="button" class="btn-copy-sm" (click)="copyModalTxnId()">
+                  <i class="bi" [class.bi-clipboard]="!copiedId" [class.bi-check-lg]="copiedId"></i>
+                  {{ copiedId ? 'Copied' : 'Copy' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="grid-item">
+              <span class="k">RRN</span>
+              <span class="v">{{ selectedTransaction.rrn || '-' }}</span>
+            </div>
+
+            <div class="grid-item">
+              <span class="k">Transaction Type & Direction</span>
+              <span class="v">{{ selectedTransaction.transaction_type }} · {{ selectedTransaction.direction || 'OUTBOUND' }}</span>
+            </div>
+
+            <div class="grid-item">
+              <span class="k">Response Code & Msg</span>
+              <span class="v">{{ selectedTransaction.response_code || '00' }} - {{ selectedTransaction.response_message || 'OK' }}</span>
+            </div>
+
+            <div class="grid-item">
+              <span class="k">Sender Account</span>
+              <span class="v">{{ selectedTransaction.sender_account }} ({{ selectedTransaction.sender_name || 'Customer' }})</span>
+            </div>
+
+            <div class="grid-item">
+              <span class="k">Beneficiary Account</span>
+              <span class="v">{{ selectedTransaction.beneficiary_account }} ({{ selectedTransaction.beneficiary_name || 'Beneficiary' }})</span>
+            </div>
+
+            <div class="grid-item">
+              <span class="k">Beneficiary IFSC</span>
+              <span class="v">{{ selectedTransaction.beneficiary_ifsc || 'SBIN0001234' }}</span>
+            </div>
+
+            <div class="grid-item">
+              <span class="k">Branch & Initiated By</span>
+              <span class="v">{{ selectedTransaction.branch_code || 'BR001' }} · {{ selectedTransaction.initiated_by || 'SYSTEM' }}</span>
+            </div>
+
+            <div class="grid-item full">
+              <span class="k">Date & Time</span>
+              <span class="v">{{ selectedTransaction.transaction_date | date:'dd MMM yyyy, hh:mm:ss a' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="details-modal-footer">
+          <button type="button" class="btn-close-action" (click)="closeDetailsModal()">Close</button>
+        </div>
+
+      </div>
+    </div>
+  }
 
 </div>
