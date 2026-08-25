@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../../services/transaction.service';
@@ -26,7 +26,7 @@ interface InboundTransaction {
   templateUrl: './inbound.html',
   styleUrl: './inbound.css'
 })
-export class Inbound {
+export class Inbound implements OnInit {
 
   // Search box
   searchValue: string = '';
@@ -49,7 +49,8 @@ export class Inbound {
 
   constructor(
     private transactionService: TransactionService,
-    private operationsService: OperationsService
+    private operationsService: OperationsService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -65,10 +66,9 @@ export class Inbound {
           this.loading = false;
           const rows = Array.isArray(response?.data) ? response.data : [];
           
-          // Filter: show transactions where direction is INBOUND OR where we are the beneficiary
+          // Filter: show transactions where direction is INBOUND
           this.transactions = rows.filter((r: any) => 
-            ['INBOUND', 'INWARD'].includes(String(r.direction).toUpperCase()) ||
-            userAccounts.includes(r.beneficiary_account)
+            ['INBOUND', 'INWARD'].includes(String(r.direction).toUpperCase())
           ).map((r: any) => ({
             transactionId: r.transaction_id, 
             rrn: r.rrn, 
@@ -81,10 +81,13 @@ export class Inbound {
                     String(r.transaction_status).toUpperCase() === 'FAILED' ? 'Failed' : 'Pending',
             responseCode: r.response_code || '—'
           }));
+          
+          this.cdr.detectChanges();
         },
         error: (error: any) => { 
           this.loading = false; 
           this.errorMessage = error?.error?.message || 'Unable to load inbound transactions.'; 
+          this.cdr.detectChanges();
         }
       });
     };

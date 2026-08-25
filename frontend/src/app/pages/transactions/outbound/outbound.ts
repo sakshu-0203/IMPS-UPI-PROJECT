@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../../services/transaction.service';
@@ -27,7 +27,7 @@ interface OutboundTransaction {
   templateUrl: './outbound.html',
   styleUrl: './outbound.css'
 })
-export class Outbound {
+export class Outbound implements OnInit {
 
   searchValue = '';
   status = 'All';
@@ -40,7 +40,8 @@ export class Outbound {
 
   constructor(
     private transactionService: TransactionService,
-    private operationsService: OperationsService
+    private operationsService: OperationsService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -56,10 +57,9 @@ export class Outbound {
           this.loading = false;
           const rows = Array.isArray(response?.data) ? response.data : [];
           
-          // Filter: show transactions where direction is OUTBOUND OR where we are the sender
+          // Filter: show transactions where direction is OUTBOUND
           this.transactions = rows.filter((r: any) => 
-            ['OUTBOUND', 'OUTWARD'].includes(String(r.direction).toUpperCase()) ||
-            userAccounts.includes(r.sender_account)
+            ['OUTBOUND', 'OUTWARD'].includes(String(r.direction).toUpperCase())
           ).map((r: any) => ({
             transactionId: r.transaction_id, 
             rrn: r.rrn, 
@@ -73,10 +73,13 @@ export class Outbound {
                     String(r.transaction_status).toUpperCase() === 'FAILED' ? 'Failed' : 'Pending', 
             responseCode: r.response_code || '—'
           }));
+          
+          this.cdr.detectChanges();
         },
         error: (error: any) => { 
           this.loading = false; 
           this.errorMessage = error?.error?.message || 'Unable to load outbound transactions.'; 
+          this.cdr.detectChanges();
         }
       });
     };
