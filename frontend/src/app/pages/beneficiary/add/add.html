@@ -1,163 +1,346 @@
 <div class="page-shell">
 
+    <!-- =================================================
+         PAGE HEADER
+    ================================================== -->
+
     <div class="page-header">
+
         <div>
-            <h1>Add Beneficiary</h1>
-            <p>Create and validate a beneficiary before transfers.</p>
+
+            <h1>
+                Add Beneficiary
+            </h1>
+
+            <p>
+                Create and validate a beneficiary before transfers.
+            </p>
+
         </div>
+
     </div>
 
+
+    <!-- =================================================
+         ERROR MESSAGE
+    ================================================== -->
+
     @if (errorMessage) {
+
         <div class="message error-message">
-            {{ errorMessage }}
+
+            <span class="message-icon">
+                !
+            </span>
+
+            <span>
+                {{ errorMessage }}
+            </span>
+
+            <button
+                type="button"
+                class="message-close"
+                (click)="errorMessage = ''"
+            >
+                ×
+            </button>
+
         </div>
+
     }
 
+
+    <!-- =================================================
+         SUCCESS MESSAGE
+    ================================================== -->
+
     @if (successMessage) {
+
         <div class="message success-message">
-            {{ successMessage }}
+
+            <span class="message-icon">
+                ✓
+            </span>
+
+            <span>
+                {{ successMessage }}
+            </span>
+
+            <button
+                type="button"
+                class="message-close"
+                (click)="successMessage = ''"
+            >
+                ×
+            </button>
+
         </div>
+
     }
+
+
+    <!-- =================================================
+         FORM CARD
+    ================================================== -->
 
     <section class="form-card">
 
+        <!-- CARD HEADER -->
+
         <div class="card-header">
-            <h2>Beneficiary Details</h2>
-            <p>All required fields are validated before submission.</p>
+
+            <h2>
+                Beneficiary Details
+            </h2>
+
+            <p>
+                All required fields are validated before submission.
+            </p>
+
         </div>
 
-        <form (ngSubmit)="submit()">
 
-            <!-- Beneficiary Name + Account Number -->
+        <!-- =================================================
+             FORM
+        ================================================== -->
+
+        <form
+            (ngSubmit)="submit()"
+            autocomplete="off"
+        >
+
+
+            <!-- =================================================
+                 ROW 1
+            ================================================= -->
+
             <div class="form-row">
 
+
+                <!-- BENEFICIARY NAME -->
+
                 <div class="form-group">
-                    <label>Beneficiary Name *</label>
+
+                    <label>
+                        Beneficiary Name
+                        <span>*</span>
+                    </label>
 
                     <input
+                        type="text"
                         name="customerName"
                         [(ngModel)]="customerName"
                         maxlength="150"
+                        placeholder="Enter beneficiary name"
                         required
                     >
 
-                    <small
-                        class="field-error"
-                        *ngIf="fieldErrors['customerName']"
-                    >
-                        {{ fieldErrors['customerName'] }}
-                    </small>
+                    @if (fieldErrors['customerName']) {
+
+                        <small class="field-error">
+
+                            {{ fieldErrors['customerName'] }}
+
+                        </small>
+
+                    }
+
                 </div>
 
 
+                <!-- ACCOUNT NUMBER -->
+
                 <div class="form-group">
-                    <label>Account Number *</label>
+
+                    <label>
+                        Account Number
+                        <span>*</span>
+                    </label>
 
                     <input
+                        type="text"
                         name="accountNumber"
                         [(ngModel)]="accountNumber"
                         maxlength="18"
+                        inputmode="numeric"
+                        placeholder="Enter account number"
+                        (input)="onlyNumbers('accountNumber')"
                         required
                     >
 
-                    <small
-                        class="field-error"
-                        *ngIf="fieldErrors['accountNumber']"
-                    >
-                        {{ fieldErrors['accountNumber'] }}
-                    </small>
+                    @if (fieldErrors['accountNumber']) {
+
+                        <small class="field-error">
+
+                            {{ fieldErrors['accountNumber'] }}
+
+                        </small>
+
+                    }
+
                 </div>
 
             </div>
 
 
-            <!-- IFSC + Bank Name -->
+            <!-- =================================================
+                 ROW 2
+            ================================================== -->
+
             <div class="form-row">
 
+
+                <!-- IFSC -->
+
                 <div class="form-group">
-                    <label>IFSC Code *</label>
+
+                    <label>
+                        IFSC Code
+                        <span>*</span>
+                    </label>
 
                     <input
+                        type="text"
                         name="ifscCode"
                         [(ngModel)]="ifscCode"
                         maxlength="11"
-                        style="text-transform: uppercase"
+                        placeholder=" Example: SBIN0001234"
+                       
+                        (input)="formatIfsc()"
                         required
                     >
 
-                    <small
-                        class="field-error"
-                        *ngIf="fieldErrors['ifscCode']"
-                    >
-                        {{ fieldErrors['ifscCode'] }}
-                    </small>
+                    
+
+                    @if (fieldErrors['ifscCode']) {
+
+                        <small class="field-error">
+
+                            {{ fieldErrors['ifscCode'] }}
+
+                        </small>
+
+                    }
+
                 </div>
 
 
+                <!-- BANK NAME -->
+
                 <div class="form-group">
-                    <label>Bank Name</label>
+
+                    <label>
+                        Bank Name
+                    </label>
 
                     <input
+                        type="text"
                         name="bankName"
                         [(ngModel)]="bankName"
                         maxlength="150"
+                        placeholder="Enter bank name"
                     >
 
-                    <small
-                        class="field-error"
-                        *ngIf="fieldErrors['bankName']"
-                    >
-                        {{ fieldErrors['bankName'] }}
-                    </small>
+                    @if (fieldErrors['bankName']) {
+
+                        <small class="field-error">
+
+                            {{ fieldErrors['bankName'] }}
+
+                        </small>
+
+                    }
+
                 </div>
 
             </div>
 
 
-            <!-- Mobile Number -->
+            <!-- =================================================
+                 ROW 3
+            ================================================== -->
+
             <div class="form-row">
 
+
+                <!-- MOBILE -->
+
                 <div class="form-group">
-                    <label>Mobile Number</label>
+
+                    <label>
+                        Mobile Number
+                    </label>
 
                     <input
+                        type="text"
                         name="mobileNumber"
                         [(ngModel)]="mobileNumber"
                         maxlength="10"
                         inputmode="numeric"
+                        placeholder="Enter mobile number"
+                        (input)="onlyNumbers('mobileNumber')"
                     >
 
-                    <small
-                        class="field-error"
-                        *ngIf="fieldErrors['mobileNumber']"
-                    >
-                        {{ fieldErrors['mobileNumber'] }}
-                    </small>
+                    @if (fieldErrors['mobileNumber']) {
+
+                        <small class="field-error">
+
+                            {{ fieldErrors['mobileNumber'] }}
+
+                        </small>
+
+                    }
+
+                </div>
+
+
+                <!-- EMPTY COLUMN -->
+
+                <div class="form-group empty-group">
+
                 </div>
 
             </div>
 
 
-            <!-- Buttons -->
+            <!-- =================================================
+                 BUTTONS
+            ================================================== -->
+
             <div class="form-actions">
 
                 <button
                     type="button"
                     class="btn-secondary"
                     (click)="reset()"
+                    [disabled]="loading"
                 >
                     Reset
                 </button>
+
 
                 <button
                     type="submit"
                     class="btn-primary"
                     [disabled]="loading"
                 >
-                    {{ loading ? 'Saving...' : 'Add Beneficiary' }}
+
+                    @if (loading) {
+
+                        Saving...
+
+                    }
+
+                    @else {
+
+                        Add Beneficiary
+
+                    }
+
                 </button>
 
             </div>
+
 
         </form>
 

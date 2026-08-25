@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
-
 import { FormsModule } from '@angular/forms';
 
 import { OperationsService } from '../../../services/operations.service';
-
 import { VALIDATION, required } from '../../../utils/validation';
 
 @Component({
@@ -20,6 +17,10 @@ import { VALIDATION, required } from '../../../utils/validation';
 })
 export class Add {
 
+  // =====================================================
+  // FORM FIELDS
+  // =====================================================
+
   customerName = '';
 
   accountNumber = '';
@@ -30,11 +31,21 @@ export class Add {
 
   mobileNumber = '';
 
+
+  // =====================================================
+  // PAGE STATE
+  // =====================================================
+
   errorMessage = '';
 
   successMessage = '';
 
   loading = false;
+
+
+  // =====================================================
+  // FIELD VALIDATION ERRORS
+  // =====================================================
 
   fieldErrors: Record<string, string> = {};
 
@@ -44,8 +55,13 @@ export class Add {
   ) {}
 
 
+  // =====================================================
+  // SUBMIT
+  // =====================================================
+
   submit(): void {
 
+    // Clear previous messages
     this.errorMessage = '';
 
     this.successMessage = '';
@@ -53,59 +69,91 @@ export class Add {
     this.fieldErrors = {};
 
 
-    // Beneficiary Name validation
+    // ===================================================
+    // BENEFICIARY NAME
+    // ===================================================
+
     if (
       !required(this.customerName) ||
-      !VALIDATION.name.test(this.customerName.trim())
+      !VALIDATION.name.test(
+        this.customerName.trim()
+      )
     ) {
+
       this.fieldErrors['customerName'] =
         'Enter a valid beneficiary name.';
     }
 
 
-    // Account Number validation
+    // ===================================================
+    // ACCOUNT NUMBER
+    // ===================================================
+
     if (
       !required(this.accountNumber) ||
-      !VALIDATION.accountNumber.test(this.accountNumber.trim())
+      !VALIDATION.accountNumber.test(
+        this.accountNumber.trim()
+      )
     ) {
+
       this.fieldErrors['accountNumber'] =
         'Enter a valid account number.';
     }
 
 
-    // IFSC validation
+    // ===================================================
+    // IFSC
+    // ===================================================
+
     if (
       !required(this.ifscCode) ||
       !VALIDATION.ifsc.test(
         this.ifscCode.trim().toUpperCase()
       )
     ) {
+
       this.fieldErrors['ifscCode'] =
         'Enter a valid 11-character IFSC.';
     }
 
 
-    // Mobile Number validation
+    // ===================================================
+    // MOBILE
+    // ===================================================
+
     if (
       this.mobileNumber &&
       !VALIDATION.mobile.test(
         this.mobileNumber.trim()
       )
     ) {
+
       this.fieldErrors['mobileNumber'] =
         'Enter a valid 10-digit mobile number.';
     }
 
 
-    // Bank Name validation
-    if (this.bankName.length > 150) {
+    // ===================================================
+    // BANK NAME
+    // ===================================================
+
+    if (
+      this.bankName &&
+      this.bankName.trim().length > 150
+    ) {
+
       this.fieldErrors['bankName'] =
         'Bank name is too long.';
     }
 
 
-    // Stop submission if validation errors exist
-    if (Object.keys(this.fieldErrors).length) {
+    // ===================================================
+    // STOP IF VALIDATION FAILED
+    // ===================================================
+
+    if (
+      Object.keys(this.fieldErrors).length > 0
+    ) {
 
       this.errorMessage =
         'Please correct the highlighted fields.';
@@ -114,9 +162,9 @@ export class Add {
     }
 
 
-    // Start API request
-    this.loading = true;
-
+    // ===================================================
+    // PREPARE API DATA
+    // ===================================================
 
     const beneficiaryData = {
 
@@ -124,24 +172,54 @@ export class Add {
         this.customerName.trim(),
 
       accountNumber:
-        this.accountNumber.trim().toUpperCase(),
+        this.accountNumber.trim(),
 
       ifscCode:
-        this.ifscCode.trim().toUpperCase(),
+        this.ifscCode
+          .trim()
+          .toUpperCase(),
 
       bankName:
         this.bankName.trim(),
 
       mobileNumber:
         this.mobileNumber.trim()
+
     };
 
+
+    console.log(
+      'Adding beneficiary:',
+      beneficiaryData
+    );
+
+
+    // ===================================================
+    // START LOADING
+    // ===================================================
+
+    this.loading = true;
+
+
+    // ===================================================
+    // API CALL
+    // ===================================================
 
     this.operations
       .addBeneficiary(beneficiaryData)
       .subscribe({
 
-        next: (r) => {
+        // ===============================================
+        // SUCCESS
+        // ===============================================
+
+        next: (r: any) => {
+
+          console.log(
+            'Add beneficiary response:',
+            r
+          );
+
 
           this.loading = false;
 
@@ -149,32 +227,71 @@ export class Add {
           if (r?.success) {
 
             this.successMessage =
-              r.message;
+              r?.message ||
+              'Beneficiary added successfully.';
 
+
+            // Clear form
             this.reset(false);
 
-          } else {
+          }
+
+          else {
 
             this.errorMessage =
               r?.message ||
               'Unable to add beneficiary.';
+
           }
+
         },
 
 
-        error: (e) => {
+        // ===============================================
+        // ERROR
+        // ===============================================
+
+        error: (e: any) => {
+
+          console.error(
+            'Add beneficiary API error:',
+            e
+          );
+
 
           this.loading = false;
 
+
+          // Backend validation errors
+          if (
+            e?.error?.fieldErrors
+          ) {
+
+            this.fieldErrors =
+              e.error.fieldErrors;
+
+          }
+
+
           this.errorMessage =
             e?.error?.message ||
+            e?.error?.error ||
             'Unable to connect to backend.';
+
         }
+
       });
+
   }
 
 
-  reset(clearMessage = true): void {
+  // =====================================================
+  // RESET
+  // =====================================================
+
+  reset(
+    clearMessage: boolean = true
+  ): void {
 
     this.customerName = '';
 
@@ -192,6 +309,60 @@ export class Add {
     if (clearMessage) {
 
       this.errorMessage = '';
+
+      this.successMessage = '';
+
     }
+
   }
+
+
+  // =====================================================
+  // ONLY NUMBERS
+  // =====================================================
+
+  onlyNumbers(
+    field: 'accountNumber' | 'mobileNumber'
+  ): void {
+
+    if (
+      field === 'accountNumber'
+    ) {
+
+      this.accountNumber =
+        this.accountNumber
+          .replace(/\D/g, '')
+          .substring(0, 18);
+
+    }
+
+
+    if (
+      field === 'mobileNumber'
+    ) {
+
+      this.mobileNumber =
+        this.mobileNumber
+          .replace(/\D/g, '')
+          .substring(0, 10);
+
+    }
+
+  }
+
+
+  // =====================================================
+  // IFSC UPPERCASE
+  // =====================================================
+
+  formatIfsc(): void {
+
+    this.ifscCode =
+      this.ifscCode
+        .toUpperCase()
+        .replace(/\s/g, '')
+        .substring(0, 11);
+
+  }
+
 }

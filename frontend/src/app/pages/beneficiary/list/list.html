@@ -1,1 +1,270 @@
-<div class="page-shell"><div class="page-header"><div><h1>Beneficiary List</h1><p>Search and review registered beneficiaries.</p></div><button class="btn-primary" type="button" routerLink="/beneficiary/add">Add Beneficiary</button></div>@if(errorMessage){<div class="message error-message">{{errorMessage}}</div>}<section class="result-card"><div class="toolbar"><input [(ngModel)]="search" placeholder="Search name, account, IFSC or bank"></div>@if(loading){<div class="loading">Loading beneficiaries...</div>}@else{<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Account</th><th>IFSC</th><th>Bank</th><th>Mobile</th><th>Status</th></tr></thead><tbody>@for(b of filtered; track b.id){<tr><td>{{b.customer_name}}</td><td>{{b.account_number}}</td><td>{{b.ifsc_code}}</td><td>{{b.bank_name||'—'}}</td><td>{{b.mobile_number||'—'}}</td><td>{{b.status}}</td></tr>}@empty{<tr><td colspan="6">No beneficiaries found.</td></tr>}</tbody></table></div>}</section></div>
+<div class="page-shell">
+
+    <!-- HEADER -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Beneficiary List</h1>
+
+            <p>
+                Search and review registered beneficiaries.
+            </p>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <button
+                type="button"
+                class="btn-secondary"
+                (click)="refresh()"
+                [disabled]="loading"
+            >
+                {{ loading ? 'Loading...' : '↻ Refresh' }}
+            </button>
+
+
+            <button
+                type="button"
+                class="btn-primary"
+                routerLink="/beneficiary/add"
+            >
+                + Add Beneficiary
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ERROR -->
+
+    @if (errorMessage) {
+
+        <div class="message error-message">
+            {{ errorMessage }}
+        </div>
+
+    }
+
+
+    <!-- CARD -->
+
+    <section class="result-card">
+
+
+        <!-- SEARCH BAR -->
+
+        <div class="toolbar">
+
+            <div class="search-box">
+
+                <span class="search-icon">
+                    🔍
+                </span>
+
+                <input
+                    type="text"
+                    name="search"
+                    [(ngModel)]="search"
+                    placeholder="Search name, account, IFSC or bank"
+                >
+
+                @if (search) {
+
+                    <button
+                        type="button"
+                        class="clear-search"
+                        (click)="clearSearch()"
+                    >
+                        ×
+                    </button>
+
+                }
+
+            </div>
+
+
+            <div class="record-count">
+
+                {{ filtered.length }}
+
+                {{
+                    filtered.length === 1
+                        ? 'Beneficiary'
+                        : 'Beneficiaries'
+                }}
+
+            </div>
+
+        </div>
+
+
+        <!-- LOADING -->
+
+        @if (loading) {
+
+            <div class="loading">
+
+                <div class="spinner"></div>
+
+                <span>
+                    Loading beneficiaries...
+                </span>
+
+            </div>
+
+        }
+
+
+        <!-- LIST -->
+
+        @else {
+
+            @if (filtered.length > 0) {
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>#</th>
+
+                                <th>Name</th>
+
+                                <th>Account Number</th>
+
+                                <th>IFSC</th>
+
+                                <th>Bank</th>
+
+                                <th>Mobile</th>
+
+                                <th>Status</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @for (
+                                b of filtered;
+                                track $index;
+                                let i = $index
+                            ) {
+
+                                <tr>
+
+                                    <td>
+                                        {{ i + 1 }}
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="beneficiary-info">
+
+                                            <div class="avatar">
+
+                                                {{
+                                                    b.customer_name
+                                                        ?.charAt(0)
+                                                        ?.toUpperCase()
+                                                        || 'B'
+                                                }}
+
+                                            </div>
+
+                                            <strong>
+                                                {{ b.customer_name }}
+                                            </strong>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        {{ b.account_number }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ b.ifsc_code }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ b.bank_name || '—' }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ b.mobile_number || '—' }}
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="status-badge">
+
+                                            {{ b.status || 'Active' }}
+
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            }
+
+
+            @else {
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        👤
+                    </div>
+
+                    <h3>
+                        No Beneficiaries Found
+                    </h3>
+
+                    <p>
+                        No beneficiaries have been registered yet.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        routerLink="/beneficiary/add"
+                    >
+                        + Add Beneficiary
+                    </button>
+
+                </div>
+
+            }
+
+        }
+
+    </section>
+
+</div>
