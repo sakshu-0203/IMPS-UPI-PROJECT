@@ -163,7 +163,6 @@
 
         <i class="bi bi-search"></i>
 
-
         <input
           type="text"
           [(ngModel)]="searchValue"
@@ -184,8 +183,7 @@
       </label>
 
 
-      <select
-        [(ngModel)]="status">
+      <select [(ngModel)]="status">
 
         <option value="All">
           All Status
@@ -213,7 +211,8 @@
     <button
       type="button"
       class="clear-btn"
-      (click)="clearFilters()">
+      (click)="clearFilters()"
+    >
 
       <i class="bi bi-arrow-counterclockwise"></i>
 
@@ -278,11 +277,11 @@
             </th>
 
             <th>
-              Remitter
+              Sender
             </th>
 
             <th>
-              Beneficiary Account
+              Beneficiary
             </th>
 
             <th>
@@ -305,7 +304,6 @@
         <!-- TABLE BODY -->
 
         <tbody>
-
 
           @for (
             transaction of filteredTransactions;
@@ -369,7 +367,17 @@
 
               <td>
 
-                {{ transaction.beneficiaryAccount }}
+                <div class="beneficiary-cell">
+
+                  <strong class="beneficiary-name">
+                    {{ transaction.beneficiaryName }}
+                  </strong>
+
+                  <span class="beneficiary-account">
+                    {{ transaction.beneficiaryAccount }}
+                  </span>
+
+                </div>
 
               </td>
 
@@ -459,7 +467,7 @@
 
           <!-- NO DATA -->
 
-          @if (filteredTransactions.length === 0) {
+          @if (filteredTransactions.length === 0 && !loading) {
 
             <tr>
 
@@ -470,11 +478,9 @@
 
                 <i class="bi bi-inbox"></i>
 
-
                 <strong>
                   No inbound transactions found
                 </strong>
-
 
                 <span>
                   Try changing your search or status filter.
@@ -486,6 +492,29 @@
 
           }
 
+
+          <!-- LOADING -->
+
+          @if (loading) {
+
+            <tr>
+
+              <td
+                colspan="8"
+                class="empty-state"
+              >
+
+                <i class="bi bi-arrow-repeat"></i>
+
+                <strong>
+                  Loading inbound transactions...
+                </strong>
+
+              </td>
+
+            </tr>
+
+          }
 
         </tbody>
 
@@ -501,7 +530,6 @@
   =================================================== -->
 
   @if (selectedTransaction) {
-
 
     <div
       class="overlay"
@@ -521,18 +549,14 @@
 
         <div class="details-header">
 
-
           <div>
 
             <span>
               Inbound Transaction
             </span>
 
-
             <h2>
-
               {{ selectedTransaction.transactionId }}
-
             </h2>
 
           </div>
@@ -548,7 +572,6 @@
 
           </button>
 
-
         </div>
 
 
@@ -558,42 +581,27 @@
 
         <div
           class="large-status"
-
-          [class.success]="
-            selectedTransaction.status === 'Success'
-          "
-
-          [class.pending]="
-            selectedTransaction.status === 'Pending'
-          "
-
-          [class.failed]="
-            selectedTransaction.status === 'Failed'
-          "
+          [class.success]="selectedTransaction.status === 'Success'"
+          [class.pending]="selectedTransaction.status === 'Pending'"
+          [class.failed]="selectedTransaction.status === 'Failed'"
         >
 
 
-          @if (
-            selectedTransaction.status === 'Success'
-          ) {
+          @if (selectedTransaction.status === 'Success') {
 
             <i class="bi bi-check-circle"></i>
 
           }
 
 
-          @if (
-            selectedTransaction.status === 'Pending'
-          ) {
+          @if (selectedTransaction.status === 'Pending') {
 
             <i class="bi bi-clock-history"></i>
 
           }
 
 
-          @if (
-            selectedTransaction.status === 'Failed'
-          ) {
+          @if (selectedTransaction.status === 'Failed') {
 
             <i class="bi bi-x-circle"></i>
 
@@ -601,11 +609,8 @@
 
 
           <span>
-
             {{ selectedTransaction.status }}
-
           </span>
-
 
         </div>
 
@@ -619,7 +624,6 @@
           <span>
             Transaction Amount
           </span>
-
 
           <strong>
 
@@ -636,7 +640,6 @@
         =================================================== -->
 
         <div class="details-section">
-
 
           <h3>
             Transaction Information
@@ -709,7 +712,6 @@
 
         <div class="details-section">
 
-
           <h3>
             Account Information
           </h3>
@@ -717,6 +719,8 @@
 
           <div class="details-grid">
 
+
+            <!-- SENDER NAME -->
 
             <div>
 
@@ -731,6 +735,8 @@
             </div>
 
 
+            <!-- SENDER ACCOUNT -->
+
             <div>
 
               <span>
@@ -743,6 +749,23 @@
 
             </div>
 
+
+            <!-- BENEFICIARY NAME -->
+
+            <div>
+
+              <span>
+                Beneficiary Name
+              </span>
+
+              <strong>
+                {{ selectedTransaction.beneficiaryName }}
+              </strong>
+
+            </div>
+
+
+            <!-- BENEFICIARY ACCOUNT -->
 
             <div>
 
@@ -768,17 +791,13 @@
 
         <div class="details-footer">
 
-
           <button
             type="button"
             class="close-details-btn"
             (click)="closeDetails()"
           >
-
             Close
-
           </button>
-
 
         </div>
 

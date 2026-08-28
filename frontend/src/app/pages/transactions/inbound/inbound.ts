@@ -2,17 +2,24 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../../services/transaction.service';
-import { OperationsService } from '../../../services/operations.service';
 
 interface InboundTransaction {
   transactionId: string;
   rrn: string;
   date: string;
+
+  // Sender / Remitter
   remitterName: string;
   remitterAccount: string;
+
+  // Receiver / Beneficiary
+  beneficiaryName: string;
   beneficiaryAccount: string;
+
   amount: number;
+
   status: 'Success' | 'Pending' | 'Failed';
+
   responseCode: string;
 }
 
@@ -28,96 +35,234 @@ interface InboundTransaction {
 })
 export class Inbound implements OnInit {
 
-  // Search box
+  // =========================================================
+  // SEARCH
+  // =========================================================
+
   searchValue: string = '';
 
-  // Status filter
+  // =========================================================
+  // STATUS FILTER
+  // =========================================================
+
   status: string = 'All';
 
-  // Selected transaction for details panel
+  // =========================================================
+  // SELECTED TRANSACTION
+  // =========================================================
+
   selectedTransaction: InboundTransaction | null = null;
 
-
-  // --------------------------------------------------
-  // INBOUND TRANSACTION DATA
-  // Later this data will come from Node.js API
-  // --------------------------------------------------
+  // =========================================================
+  // TRANSACTION DATA
+  // =========================================================
 
   transactions: InboundTransaction[] = [];
-  loading = false;
-  errorMessage = '';
+
+  loading: boolean = false;
+
+  errorMessage: string = '';
+
 
   constructor(
     private transactionService: TransactionService,
-    private operationsService: OperationsService,
     private cdr: ChangeDetectorRef
   ) {}
+
+
+  // =========================================================
+  // PAGE INIT
+  // =========================================================
 
   ngOnInit(): void {
     this.loadTransactions();
   }
 
-  loadTransactions(): void {
-    this.loading = true;
-    
-    const fetchWithAccounts = (userAccounts: string[]) => {
-      this.transactionService.getTransactions().subscribe({
-        next: (response: any) => {
-          this.loading = false;
-          const rows = Array.isArray(response?.data) ? response.data : [];
-          
-          // Filter: show transactions where direction is INBOUND
-          this.transactions = rows.filter((r: any) => 
-            ['INBOUND', 'INWARD'].includes(String(r.direction).toUpperCase())
-          ).map((r: any) => ({
-            transactionId: r.transaction_id, 
-            rrn: r.rrn, 
-            date: r.transaction_date,
-            remitterName: r.sender_name || '—', 
-            remitterAccount: r.sender_account,
-            beneficiaryAccount: r.beneficiary_account, 
-            amount: Number(r.amount),
-            status: String(r.transaction_status).toUpperCase() === 'SUCCESS' ? 'Success' : 
-                    String(r.transaction_status).toUpperCase() === 'FAILED' ? 'Failed' : 'Pending',
-            responseCode: r.response_code || '—'
-          }));
-          
-          this.cdr.detectChanges();
-        },
-        error: (error: any) => { 
-          this.loading = false; 
-          this.errorMessage = error?.error?.message || 'Unable to load inbound transactions.'; 
-          this.cdr.detectChanges();
-        }
-      });
-    };
 
-    // First get the user's accounts, then fetch transactions to filter received ones
-    this.operationsService.getAccounts().subscribe({
-      next: (accRes: any) => {
-        const userAccounts = (accRes?.data || []).map((a: any) => a.account_number);
-        // Fallback accounts in case API doesn't return them (matching new-transfer logic)
-        if (userAccounts.length === 0) {
-          userAccounts.push('123456789012', '123456789013', '123456789014');
-        }
-        fetchWithAccounts(userAccounts);
+  // =========================================================
+  // LOAD INBOUND TRANSACTIONS
+  // =========================================================
+
+  loadTransactions(): void {
+
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.transactionService.getTransactions().subscribe({
+
+      next: (response: any) => {
+
+        console.log('[Inbound] API Response:', response);
+
+        const rows = Array.isArray(response?.data)
+          ? response.data
+          : [];
+
+
+        // =====================================================
+        // FILTER ONLY INBOUND / INWARD
+        // =====================================================
+
+        this.transactions = rows
+
+          .filter((r: any) => {
+
+            const direction = String(
+              r?.direction || ''
+            )
+              .trim()
+              .toUpperCase();
+
+            return (
+              direction === 'INBOUND' ||
+              direction === 'INWARD'
+            );
+
+          })
+
+
+          // ===================================================
+          // MAP API RESPONSE
+          // ===================================================
+
+          .map((r: any) => {
+
+            const apiStatus = String(
+              r?.transaction_status || ''
+            )
+              .trim()
+              .toUpperCase();
+
+
+            let status: 'Success' | 'Pending' | 'Failed';
+
+            if (apiStatus === 'SUCCESS') {
+
+              status = 'Success';
+
+            } else if (apiStatus === 'FAILED') {
+
+              status = 'Failed';
+
+            } else {
+
+              status = 'Pending';
+
+            }
+
+
+            return {
+
+              // ------------------------------------------------
+              // TRANSACTION
+              // ------------------------------------------------
+
+              transactionId:
+                r?.transaction_id || '—',
+
+              rrn:
+                r?.rrn || '—',
+
+              date:
+                r?.transaction_date || '—',
+
+
+              // ------------------------------------------------
+              // REMITTER / SENDER
+              // ------------------------------------------------
+
+              remitterName:
+                r?.sender_name || '—',
+
+              remitterAccount:
+                r?.sender_account || '—',
+
+
+              // ------------------------------------------------
+              // BENEFICIARY / RECEIVER
+              // ------------------------------------------------
+
+              beneficiaryName:
+                r?.beneficiary_name || '—',
+
+              beneficiaryAccount:
+                r?.beneficiary_account || '—',
+
+
+              // ------------------------------------------------
+              // AMOUNT
+              // ------------------------------------------------
+
+              amount:
+                Number(r?.amount || 0),
+
+
+              // ------------------------------------------------
+              // STATUS
+              // ------------------------------------------------
+
+              status,
+
+
+              // ------------------------------------------------
+              // RESPONSE CODE
+              // ------------------------------------------------
+
+              responseCode:
+                r?.response_code || '—'
+
+            };
+
+          });
+
+
+        console.log(
+          '[Inbound] Loaded transactions:',
+          this.transactions
+        );
+
+        this.loading = false;
+
+        this.cdr.detectChanges();
+
       },
-      error: () => {
-        // Continue with fallback accounts if API fails
-        fetchWithAccounts(['123456789012', '123456789013', '123456789014']);
+
+
+      error: (error: any) => {
+
+        console.error(
+          '[Inbound] API Error:',
+          error
+        );
+
+        this.loading = false;
+
+        this.transactions = [];
+
+        this.errorMessage =
+          error?.error?.message ||
+          'Unable to load inbound transactions.';
+
+        this.cdr.detectChanges();
+
       }
+
     });
+
   }
 
 
-  // --------------------------------------------------
+  // =========================================================
   // FILTERED TRANSACTIONS
-  // --------------------------------------------------
+  // =========================================================
 
   get filteredTransactions(): InboundTransaction[] {
 
     const search =
-      this.searchValue.trim().toLowerCase();
+      this.searchValue
+        .trim()
+        .toLowerCase();
+
 
     return this.transactions.filter(
       (transaction: InboundTransaction) => {
@@ -141,6 +286,10 @@ export class Inbound implements OnInit {
             .toLowerCase()
             .includes(search) ||
 
+          transaction.beneficiaryName
+            .toLowerCase()
+            .includes(search) ||
+
           transaction.beneficiaryAccount
             .toLowerCase()
             .includes(search);
@@ -159,21 +308,20 @@ export class Inbound implements OnInit {
   }
 
 
-  // --------------------------------------------------
+  // =========================================================
   // SUMMARY COUNTS
-  // --------------------------------------------------
+  // =========================================================
 
   get totalCount(): number {
-
     return this.transactions.length;
-
   }
 
 
   get successCount(): number {
 
     return this.transactions.filter(
-      transaction => transaction.status === 'Success'
+      transaction =>
+        transaction.status === 'Success'
     ).length;
 
   }
@@ -182,7 +330,8 @@ export class Inbound implements OnInit {
   get pendingCount(): number {
 
     return this.transactions.filter(
-      transaction => transaction.status === 'Pending'
+      transaction =>
+        transaction.status === 'Pending'
     ).length;
 
   }
@@ -191,15 +340,16 @@ export class Inbound implements OnInit {
   get failedCount(): number {
 
     return this.transactions.filter(
-      transaction => transaction.status === 'Failed'
+      transaction =>
+        transaction.status === 'Failed'
     ).length;
 
   }
 
 
-  // --------------------------------------------------
+  // =========================================================
   // VIEW TRANSACTION
-  // --------------------------------------------------
+  // =========================================================
 
   viewTransaction(
     transaction: InboundTransaction
@@ -210,9 +360,9 @@ export class Inbound implements OnInit {
   }
 
 
-  // --------------------------------------------------
+  // =========================================================
   // CLOSE DETAILS
-  // --------------------------------------------------
+  // =========================================================
 
   closeDetails(): void {
 
@@ -221,14 +371,13 @@ export class Inbound implements OnInit {
   }
 
 
-  // --------------------------------------------------
+  // =========================================================
   // CLEAR FILTERS
-  // --------------------------------------------------
+  // =========================================================
 
   clearFilters(): void {
 
     this.searchValue = '';
-
     this.status = 'All';
 
   }

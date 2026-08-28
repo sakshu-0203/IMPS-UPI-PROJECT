@@ -81,4 +81,4 @@
 .btn-receipt-action.btn-outline{background:#fff;border:1px solid #cbd5e1;color:#334155}
 @media(max-width:1000px){.transfer-grid{grid-template-columns:1fr}.summary-card{position:static}}
 @media(max-width:650px){.page-header{align-items:flex-start;gap:8px;flex-direction:column}.form-row,.receipt-grid,.receipt-footer{grid-template-columns:1fr}}
-
+

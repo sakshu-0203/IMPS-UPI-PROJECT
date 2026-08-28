@@ -123,11 +123,7 @@
 
         <i class="bi bi-search"></i>
 
-        <input
-          type="text"
-          [(ngModel)]="searchValue"
-          placeholder="Transaction ID / RRN / Customer / Account"
-        />
+        <input type="text" [(ngModel)]="searchValue" placeholder="Transaction ID / RRN / Customer / Account" />
 
       </div>
 
@@ -163,10 +159,7 @@
     </div>
 
 
-    <button
-      type="button"
-      class="clear-btn"
-      (click)="clearFilters()">
+    <button type="button" class="clear-btn" (click)="clearFilters()">
 
       <i class="bi bi-arrow-counterclockwise"></i>
 
@@ -230,161 +223,147 @@
         <tbody>
 
           @for (
-            transaction of filteredTransactions;
-            track transaction.transactionId
+          transaction of filteredTransactions;
+          track transaction.transactionId
           ) {
 
-            <tr>
+          <tr>
 
-              <td>
+            <td>
 
-                <strong class="transaction-id">
-                  {{ transaction.transactionId }}
-                </strong>
+              <strong class="transaction-id">
+                {{ transaction.transactionId }}
+              </strong>
 
-              </td>
-
-
-              <td>
-                {{ transaction.rrn }}
-              </td>
+            </td>
 
 
-              <td>
-                {{ transaction.date }}
-              </td>
+            <td>
+              {{ transaction.rrn }}
+            </td>
 
 
-              <td>
-
-                <div class="customer">
-
-                  <strong>
-                    {{ transaction.customerName }}
-                  </strong>
-
-                  <span>
-                    {{ transaction.debitAccount }}
-                  </span>
-
-                </div>
-
-              </td>
+            <td>
+              {{ transaction.date }}
+            </td>
 
 
-              <td>
-
-                <div class="customer">
-
-                  <strong>
-                    {{ transaction.beneficiaryName }}
-                  </strong>
-
-                  <span>
-                    {{ transaction.beneficiaryAccount }}
-                  </span>
-
-                </div>
-
-              </td>
 
 
-              <td>
 
-                <strong class="amount">
+            <td class="party-cell">
+              <div class="party-name">
+                {{ transaction.customerName }}
+              </div>
 
-                  ₹
-                  {{ transaction.amount | number:'1.2-2' }}
+              <div class="party-account">
+                {{ transaction.debitAccount }}
+              </div>
+            </td>
 
-                </strong>
+            <td class="party-cell">
+              <div class="party-name">
+                {{ transaction.beneficiaryName }}
+              </div>
 
-              </td>
-
-
-              <td>
-
-                @if (transaction.status === 'Success') {
-
-                  <span class="status success">
-
-                    <span></span>
-
-                    Success
-
-                  </span>
-
-                }
+              <div class="party-account">          
+                {{ transaction.beneficiaryAccount }}
+              </div>
+            </td>
 
 
-                @if (transaction.status === 'Pending') {
 
-                  <span class="status pending">
+            <td>
 
-                    <span></span>
+              <strong class="amount">
 
-                    Pending
+                ₹
+                {{ transaction.amount | number:'1.2-2' }}
 
-                  </span>
+              </strong>
 
-                }
-
-
-                @if (transaction.status === 'Failed') {
-
-                  <span class="status failed">
-
-                    <span></span>
-
-                    Failed
-
-                  </span>
-
-                }
-
-              </td>
+            </td>
 
 
-              <td>
+            <td>
 
-                <button
-                  type="button"
-                  class="view-btn"
-                  (click)="viewTransaction(transaction)">
+              @if (transaction.status === 'Success') {
 
-                  <i class="bi bi-eye"></i>
+              <span class="status success">
 
-                  View
+                <span></span>
 
-                </button>
+                Success
 
-              </td>
+              </span>
 
-            </tr>
+              }
+
+
+              @if (transaction.status === 'Pending') {
+
+              <span class="status pending">
+
+                <span></span>
+
+                Pending
+
+              </span>
+
+              }
+
+
+              @if (transaction.status === 'Failed') {
+
+              <span class="status failed">
+
+                <span></span>
+
+                Failed
+
+              </span>
+
+              }
+
+            </td>
+
+
+            <td>
+
+              <button type="button" class="view-btn" (click)="viewTransaction(transaction)">
+
+                <i class="bi bi-eye"></i>
+
+                View
+
+              </button>
+
+            </td>
+
+          </tr>
 
           }
 
 
           @if (filteredTransactions.length === 0) {
 
-            <tr>
+          <tr>
 
-              <td
-                colspan="8"
-                class="empty-state">
+            <td colspan="8" class="empty-state">
 
-                <i class="bi bi-inbox"></i>
+              <i class="bi bi-inbox"></i>
 
-                <strong>
-                  No outbound transactions found
-                </strong>
+              <strong>
+                No outbound transactions found
+              </strong>
 
-                <span>
-                  Try changing your search or status filter.
-                </span>
+              <span>
+                Try changing your search or status filter.
+              </span>
 
-              </td>
+            </td>
 
-            </tr>
+          </tr>
 
           }
 
@@ -401,261 +380,244 @@
 
   @if (selectedTransaction) {
 
-    <div
-      class="overlay"
-      (click)="closeDetails()">
+  <div class="overlay" (click)="closeDetails()">
 
-      <div
-        class="details-panel"
-        (click)="$event.stopPropagation()">
+    <div class="details-panel" (click)="$event.stopPropagation()">
 
 
-        <div class="details-header">
+      <div class="details-header">
 
-          <div>
+        <div>
 
-            <span>
-              Outbound Transaction
-            </span>
+          <span>
+            Outbound Transaction
+          </span>
 
-            <h2>
-              {{ selectedTransaction.transactionId }}
-            </h2>
-
-          </div>
-
-
-          <button
-            type="button"
-            class="close-btn"
-            (click)="closeDetails()">
-
-            <i class="bi bi-x-lg"></i>
-
-          </button>
+          <h2>
+            {{ selectedTransaction.transactionId }}
+          </h2>
 
         </div>
 
 
-        <!-- STATUS -->
+        <button type="button" class="close-btn" (click)="closeDetails()">
 
-        <div
-          class="large-status"
+          <i class="bi bi-x-lg"></i>
 
-          [class.success]="
+        </button>
+
+      </div>
+
+
+      <!-- STATUS -->
+
+      <div class="large-status" [class.success]="
             selectedTransaction.status === 'Success'
-          "
-
-          [class.pending]="
+          " [class.pending]="
             selectedTransaction.status === 'Pending'
-          "
-
-          [class.failed]="
+          " [class.failed]="
             selectedTransaction.status === 'Failed'
           ">
 
 
-          @if (
-            selectedTransaction.status === 'Success'
-          ) {
+        @if (
+        selectedTransaction.status === 'Success'
+        ) {
 
-            <i class="bi bi-check-circle"></i>
+        <i class="bi bi-check-circle"></i>
 
-          }
+        }
 
 
-          @if (
-            selectedTransaction.status === 'Pending'
-          ) {
+        @if (
+        selectedTransaction.status === 'Pending'
+        ) {
 
-            <i class="bi bi-clock-history"></i>
+        <i class="bi bi-clock-history"></i>
 
-          }
+        }
 
 
-          @if (
-            selectedTransaction.status === 'Failed'
-          ) {
+        @if (
+        selectedTransaction.status === 'Failed'
+        ) {
 
-            <i class="bi bi-x-circle"></i>
+        <i class="bi bi-x-circle"></i>
 
-          }
+        }
 
 
-          {{ selectedTransaction.status }}
-
-        </div>
-
-
-        <!-- AMOUNT -->
-
-        <div class="amount-box">
-
-          <span>
-            Transaction Amount
-          </span>
-
-          <strong>
-
-            ₹
-            {{ selectedTransaction.amount | number:'1.2-2' }}
-
-          </strong>
-
-        </div>
-
-
-        <!-- TRANSACTION INFORMATION -->
-
-        <div class="details-section">
-
-          <h3>
-            Transaction Information
-          </h3>
-
-
-          <div class="details-grid">
-
-            <div>
-
-              <span>
-                Transaction ID
-              </span>
-
-              <strong>
-                {{ selectedTransaction.transactionId }}
-              </strong>
-
-            </div>
-
-
-            <div>
-
-              <span>
-                RRN
-              </span>
-
-              <strong>
-                {{ selectedTransaction.rrn }}
-              </strong>
-
-            </div>
-
-
-            <div>
-
-              <span>
-                Date &amp; Time
-              </span>
-
-              <strong>
-                {{ selectedTransaction.date }}
-              </strong>
-
-            </div>
-
-
-            <div>
-
-              <span>
-                Response Code
-              </span>
-
-              <strong>
-                {{ selectedTransaction.responseCode }}
-              </strong>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- CUSTOMER INFORMATION -->
-
-        <div class="details-section">
-
-          <h3>
-            Customer Information
-          </h3>
-
-
-          <div class="details-grid">
-
-            <div>
-
-              <span>
-                Customer Name
-              </span>
-
-              <strong>
-                {{ selectedTransaction.customerName }}
-              </strong>
-
-            </div>
-
-
-            <div>
-
-              <span>
-                Debit Account
-              </span>
-
-              <strong>
-                {{ selectedTransaction.debitAccount }}
-              </strong>
-
-            </div>
-
-
-            <div>
-
-              <span>
-                Beneficiary Name
-              </span>
-
-              <strong>
-                {{ selectedTransaction.beneficiaryName }}
-              </strong>
-
-            </div>
-
-
-            <div>
-
-              <span>
-                Beneficiary Account
-              </span>
-
-              <strong>
-                {{ selectedTransaction.beneficiaryAccount }}
-              </strong>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="details-footer">
-
-          <button
-            type="button"
-            class="close-details-btn"
-            (click)="closeDetails()">
-
-            Close
-
-          </button>
-
-        </div>
-
+        {{ selectedTransaction.status }}
 
       </div>
 
+
+      <!-- AMOUNT -->
+
+      <div class="amount-box">
+
+        <span>
+          Transaction Amount
+        </span>
+
+        <strong>
+
+          ₹
+          {{ selectedTransaction.amount | number:'1.2-2' }}
+
+        </strong>
+
+      </div>
+
+
+      <!-- TRANSACTION INFORMATION -->
+
+      <div class="details-section">
+
+        <h3>
+          Transaction Information
+        </h3>
+
+
+        <div class="details-grid">
+
+          <div>
+
+            <span>
+              Transaction ID
+            </span>
+
+            <strong>
+              {{ selectedTransaction.transactionId }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              RRN
+            </span>
+
+            <strong>
+              {{ selectedTransaction.rrn }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              Date &amp; Time
+            </span>
+
+            <strong>
+              {{ selectedTransaction.date }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              Response Code
+            </span>
+
+            <strong>
+              {{ selectedTransaction.responseCode }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- CUSTOMER INFORMATION -->
+
+      <div class="details-section">
+
+        <h3>
+          Customer Information
+        </h3>
+
+
+        <div class="details-grid">
+
+          <div>
+
+            <span>
+              Customer Name
+            </span>
+
+            <strong>
+              {{ selectedTransaction.customerName }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              Debit Account
+            </span>
+
+            <strong>
+              {{ selectedTransaction.debitAccount }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              Beneficiary Name
+            </span>
+
+            <strong>
+              {{ selectedTransaction.beneficiaryName }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              Beneficiary Account
+            </span>
+
+            <strong>
+              {{ selectedTransaction.beneficiaryAccount }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="details-footer">
+
+        <button type="button" class="close-details-btn" (click)="closeDetails()">
+
+          Close
+
+        </button>
+
+      </div>
+
+
     </div>
+
+  </div>
 
   }
 
