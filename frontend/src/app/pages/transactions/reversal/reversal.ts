@@ -27,7 +27,7 @@ interface ReversalTransaction {
 export class Reversal {
 
   searchValue = '';
-  status = 'All';
+  status = 'Rejected';
 
   selectedTransaction: ReversalTransaction | null = null;
 
@@ -37,6 +37,28 @@ export class Reversal {
 
   constructor(private transactionService: TransactionService) {}
 
+ private normalizeTransactionStatus(status: unknown): ReversalTransaction['status'] {
+    const value = String(status ?? '').trim().toUpperCase();
+
+    if (['FAILED', 'REJECTED', 'RJ'].includes(value)) {
+      return 'Rejected';
+    }
+
+    if (['APPROVED', 'APPROVAL_GRANTED'].includes(value)) {
+      return 'Approved';
+    }
+
+    if (['SUCCESS', 'COMPLETED', 'SETTLED'].includes(value)) {
+      return 'Completed';
+    }
+
+    if (['PENDING', 'IN PROCESS', 'IP'].includes(value)) {
+      return 'Pending';
+    }
+
+    return 'Pending';
+  }
+
   ngOnInit(): void { this.loadTransactions(); }
 
   loadTransactions(): void {
@@ -44,12 +66,15 @@ export class Reversal {
     this.transactionService.getTransactions().subscribe({
       next: (response: any) => {
         this.loading = false;
-        const rows = Array.isArray(response?.data) ? response.data : [];
+        const rows = (Array.isArray(response?.data) ? response.data : []).filter((r: any) => {
+          const status = String(r?.transaction_status ?? '').trim().toUpperCase();
+          return ['FAILED', 'REJECTED', 'RJ'].includes(status);
+        });
         this.transactions = rows.map((r: any) => ({
           transactionId: r.transaction_id, rrn: r.rrn, originalDate: r.transaction_date,
           customerName: r.sender_name || '—', accountNumber: r.sender_account, amount: Number(r.amount),
           reason: r.response_message || 'Reversal requested by operations',
-          status: String(r.transaction_status).toUpperCase() === 'FAILED' ? 'Rejected' : String(r.transaction_status).toUpperCase() === 'SUCCESS' ? 'Completed' : 'Pending'
+          status: this.normalizeTransactionStatus(r.transaction_status)
         }));
       },
       error: (error: any) => { this.loading = false; this.errorMessage = error?.error?.message || 'Unable to load reversal records.'; }
@@ -161,7 +186,7 @@ export class Reversal {
   clearFilters(): void {
 
     this.searchValue = '';
-    this.status = 'All';
+    this.status = 'Rejected';
 
   }
 
