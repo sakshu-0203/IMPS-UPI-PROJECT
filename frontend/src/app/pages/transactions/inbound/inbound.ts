@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { TransactionService } from '../../../services/transaction.service';
+import { normalizeTransactionDirection } from '../../../utils/validation';
 
 interface InboundTransaction {
   transactionId: string;
@@ -25,7 +27,7 @@ interface InboundTransaction {
   templateUrl: './inbound.html',
   styleUrl: './inbound.css'
 })
-export class Inbound {
+export class Inbound implements OnInit {
 
   // Search box
   searchValue: string = '';
@@ -39,33 +41,84 @@ export class Inbound {
 
   // --------------------------------------------------
   // INBOUND TRANSACTION DATA
-  // Later this data will come from Node.js API
+  // Loaded from API
   // --------------------------------------------------
 
   transactions: InboundTransaction[] = [];
   loading = false;
   errorMessage = '';
 
-  constructor(private transactionService: TransactionService) {}
+  constructor(
+    private transactionService: TransactionService,
+    private route: ActivatedRoute
+  ) {}
 
-  ngOnInit(): void { this.loadTransactions(); }
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const targetId = params['id'] || params['transactionId'] || params['txnId'] || params['rrn'];
+      this.loadTransactions(targetId);
+    });
+  }
 
-  loadTransactions(): void {
+  loadTransactions(targetId?: string): void {
     this.loading = true;
     this.transactionService.getTransactions().subscribe({
       next: (response: any) => {
         this.loading = false;
         const rows = Array.isArray(response?.data) ? response.data : [];
-        this.transactions = rows.filter((r: any) => ['INBOUND', 'INWARD'].includes(String(r.direction).toUpperCase())).map((r: any) => ({
-          transactionId: r.transaction_id, rrn: r.rrn, date: r.transaction_date,
-          remitterName: r.sender_name || '—', remitterAccount: r.sender_account,
-          beneficiaryAccount: r.beneficiary_account, amount: Number(r.amount),
-          status: String(r.transaction_status).toUpperCase() === 'SUCCESS' ? 'Success' : String(r.transaction_status).toUpperCase() === 'FAILED' ? 'Failed' : 'Pending',
-          responseCode: r.response_code || '—'
-        }));
+        this.transactions = rows
+          .filter((r: any) => normalizeTransactionDirection(r) === 'INBOUND')
+          .map((r: any) => this.mapToInbound(r));
+
+        if (targetId) {
+          const cleanId = String(targetId).trim().toLowerCase();
+          const found = this.transactions.find(
+            t => t.transactionId.toLowerCase() === cleanId || t.rrn.toLowerCase() === cleanId
+          );
+          if (found) {
+            this.selectedTransaction = found;
+          } else {
+            this.loadSingleTransaction(targetId);
+          }
+        }
       },
-      error: (error: any) => { this.loading = false; this.errorMessage = error?.error?.message || 'Unable to load inbound transactions.'; }
+      error: (error: any) => {
+        this.loading = false;
+        this.errorMessage = error?.error?.message || 'Unable to load inbound transactions.';
+        if (targetId) {
+          this.loadSingleTransaction(targetId);
+        }
+      }
     });
+  }
+
+  private loadSingleTransaction(targetId: string): void {
+    this.transactionService.getTransactionById(targetId).subscribe({
+      next: (res: any) => {
+        if (res?.success && res.data) {
+          const mapped = this.mapToInbound(res.data);
+          this.selectedTransaction = mapped;
+          if (!this.transactions.some(t => t.transactionId.toLowerCase() === mapped.transactionId.toLowerCase())) {
+            this.transactions.unshift(mapped);
+          }
+        }
+      },
+      error: () => {}
+    });
+  }
+
+  private mapToInbound(r: any): InboundTransaction {
+    return {
+      transactionId: r.transaction_id || r.transactionId || '—',
+      rrn: r.rrn || '—',
+      date: r.transaction_date || r.date || new Date().toISOString(),
+      remitterName: r.sender_name || r.remitterName || r.customerName || '—',
+      remitterAccount: r.sender_account || r.remitterAccount || r.debitAccount || '—',
+      beneficiaryAccount: r.beneficiary_account || r.beneficiaryAccount || '—',
+      amount: Number(r.amount || 0),
+      status: String(r.transaction_status || r.status).toUpperCase() === 'SUCCESS' ? 'Success' : String(r.transaction_status || r.status).toUpperCase() === 'FAILED' ? 'Failed' : 'Pending',
+      responseCode: r.response_code || r.responseCode || '—'
+    };
   }
 
 

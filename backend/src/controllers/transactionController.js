@@ -20,8 +20,10 @@ const getTransactions = async (req, res) => {
 const getTransactionById = async (req, res) => {
   try {
     const transactionId = clean(req.params.transactionId);
-    if (!patterns.transactionId.test(transactionId)) return res.status(400).json({ success: false, message: 'Invalid transaction ID.' });
-    const [rows] = await pool.query(`SELECT * FROM transactions WHERE transaction_id = ? LIMIT 1`, [transactionId]);
+    if (!patterns.transactionId.test(transactionId) && !patterns.rrn.test(transactionId)) {
+      return res.status(400).json({ success: false, message: 'Invalid transaction ID.' });
+    }
+    const [rows] = await pool.query(`SELECT * FROM transactions WHERE transaction_id = ? OR rrn = ? LIMIT 1`, [transactionId, transactionId]);
     if (!rows.length) return res.status(404).json({ success: false, message: 'Transaction not found.' });
     res.json({ success: true, data: rows[0] });
   } catch (error) {

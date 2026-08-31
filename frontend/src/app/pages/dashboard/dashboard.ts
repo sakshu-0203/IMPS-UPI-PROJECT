@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import {
   DashboardService,
   DashboardSummary
 } from '../../services/dashboard.service';
+import { normalizeTransactionDirection } from '../../utils/validation';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,7 +25,10 @@ export class Dashboard implements OnInit {
   loading = true;
   errorMessage = '';
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(
+    private dashboardService: DashboardService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     console.log('[Dashboard] ngOnInit');
@@ -80,6 +85,13 @@ export class Dashboard implements OnInit {
 
   refreshDashboard(): void {
     this.loadDashboard();
+  }
+
+  viewTransaction(tx: any): void {
+    const direction = normalizeTransactionDirection(tx);
+    const txnId = tx.transaction_id || tx.transactionId || tx.id || tx.rrn;
+    const targetRoute = direction === 'INBOUND' ? '/transactions/inbound' : '/transactions/outbound';
+    this.router.navigate([targetRoute], { queryParams: { id: txnId } });
   }
 
   formatAmount(amount: number): string {
