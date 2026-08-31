@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { TransactionService } from '../../../services/transaction.service';
-import { normalizeTransactionDirection } from '../../../utils/validation';
+import { OperationsService } from '../../../services/operations.service';
 
 interface OutboundTransaction {
   transactionId: string;
@@ -41,76 +40,65 @@ export class Outbound implements OnInit {
 
   constructor(
     private transactionService: TransactionService,
-    private route: ActivatedRoute
+    private operationsService: OperationsService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      const targetId = params['id'] || params['transactionId'] || params['txnId'] || params['rrn'];
-      this.loadTransactions(targetId);
-    });
+    this.loadTransactions();
   }
 
-  loadTransactions(targetId?: string): void {
+  loadTransactions(): void {
     this.loading = true;
-    this.transactionService.getTransactions().subscribe({
-      next: (response: any) => {
-        this.loading = false;
-        const rows = Array.isArray(response?.data) ? response.data : [];
-        this.transactions = rows
-          .filter((r: any) => normalizeTransactionDirection(r) === 'OUTBOUND')
-          .map((r: any) => this.mapToOutbound(r));
+    
+    const fetchWithAccounts = (userAccounts: string[]) => {
+      this.transactionService.getTransactions().subscribe({
+        next: (response: any) => {
+          this.loading = false;
+          const rows = Array.isArray(response?.data) ? response.data : [];
+          
+          // Filter: show transactions where direction is OUTBOUND
+          this.transactions = rows.filter((r: any) => 
+            ['OUTBOUND', 'OUTWARD'].includes(String(r.direction).toUpperCase())
+          ).map((r: any) => ({
+            transactionId: r.transaction_id, 
+            rrn: r.rrn, 
+            date: r.transaction_date, 
+            customerName: r.sender_name || '—',
+            debitAccount: r.sender_account, 
+            beneficiaryName: r.beneficiary_name || '—', 
+            beneficiaryAccount: r.beneficiary_account,
+            amount: Number(r.amount), 
+            status: String(r.transaction_status).toUpperCase() === 'SUCCESS' ? 'Success' : 
+                    String(r.transaction_status).toUpperCase() === 'FAILED' ? 'Failed' : 'Pending', 
+            responseCode: r.response_code || '—'
+          }));
+          
+          this.cdr.detectChanges();
+        },
+        error: (error: any) => { 
+          this.loading = false; 
+          this.errorMessage = error?.error?.message || 'Unable to load outbound transactions.'; 
+          this.cdr.detectChanges();
+        }
+      });
+    };
 
-        if (targetId) {
-          const cleanId = String(targetId).trim().toLowerCase();
-          const found = this.transactions.find(
-            t => t.transactionId.toLowerCase() === cleanId || t.rrn.toLowerCase() === cleanId
-          );
-          if (found) {
-            this.selectedTransaction = found;
-          } else {
-            this.loadSingleTransaction(targetId);
-          }
+    // First get the user's accounts, then fetch transactions to filter sent ones
+    this.operationsService.getAccounts().subscribe({
+      next: (accRes: any) => {
+        const userAccounts = (accRes?.data || []).map((a: any) => a.account_number);
+        // Fallback accounts matching new-transfer logic
+        if (userAccounts.length === 0) {
+          userAccounts.push('123456789012', '123456789013', '123456789014');
         }
+        fetchWithAccounts(userAccounts);
       },
-      error: (error: any) => {
-        this.loading = false;
-        this.errorMessage = error?.error?.message || 'Unable to load outbound transactions.';
-        if (targetId) {
-          this.loadSingleTransaction(targetId);
-        }
+      error: () => {
+        // Continue with fallback accounts if API fails
+        fetchWithAccounts(['123456789012', '123456789013', '123456789014']);
       }
     });
-  }
-
-  private loadSingleTransaction(targetId: string): void {
-    this.transactionService.getTransactionById(targetId).subscribe({
-      next: (res: any) => {
-        if (res?.success && res.data) {
-          const mapped = this.mapToOutbound(res.data);
-          this.selectedTransaction = mapped;
-          if (!this.transactions.some(t => t.transactionId.toLowerCase() === mapped.transactionId.toLowerCase())) {
-            this.transactions.unshift(mapped);
-          }
-        }
-      },
-      error: () => {}
-    });
-  }
-
-  private mapToOutbound(r: any): OutboundTransaction {
-    return {
-      transactionId: r.transaction_id || r.transactionId || '—',
-      rrn: r.rrn || '—',
-      date: r.transaction_date || r.date || new Date().toISOString(),
-      customerName: r.sender_name || r.customerName || '—',
-      debitAccount: r.sender_account || r.debitAccount || '—',
-      beneficiaryName: r.beneficiary_name || r.beneficiaryName || '—',
-      beneficiaryAccount: r.beneficiary_account || r.beneficiaryAccount || '—',
-      amount: Number(r.amount || 0),
-      status: String(r.transaction_status || r.status).toUpperCase() === 'SUCCESS' ? 'Success' : String(r.transaction_status || r.status).toUpperCase() === 'FAILED' ? 'Failed' : 'Pending',
-      responseCode: r.response_code || r.responseCode || '—'
-    };
   }
 
 

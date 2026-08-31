@@ -20,14 +20,12 @@ const getTransactions = async (req, res) => {
 const getTransactionById = async (req, res) => {
   try {
     const transactionId = clean(req.params.transactionId);
-    if (!patterns.transactionId.test(transactionId) && !patterns.rrn.test(transactionId)) {
-      return res.status(400).json({ success: false, message: 'Invalid transaction ID.' });
-    }
-    const [rows] = await pool.query(`SELECT * FROM transactions WHERE transaction_id = ? OR rrn = ? LIMIT 1`, [transactionId, transactionId]);
+    if (!patterns.transactionId.test(transactionId)) return res.status(400).json({ success: false, message: 'Invalid transaction ID.' });
+    const [rows] = await pool.query(`SELECT * FROM transactions WHERE transaction_id = ? LIMIT 1`, [transactionId]);
     if (!rows.length) return res.status(404).json({ success: false, message: 'Transaction not found.' });
     res.json({ success: true, data: rows[0] });
   } catch (error) {
-    console.error('Get transaction error:', error);
+    console.error('Get transaction error:', error);  
     res.status(500).json({ success: false, message: 'Failed to fetch transaction.' });
   }
 };
@@ -94,18 +92,42 @@ const createTransaction = async (req, res) => {
     const rrn = `${Date.now()}${Math.floor(Math.random() * 100)}`.slice(-12);
     const msg = `Transfer request for ₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })} submitted. Status: In Process (Sent for Checker Approval).`;
 
-    // 3. Insert transaction record with status PENDING (In Process)
+    // 3. Insert OUTBOUND transaction record with status PENDING (In Process)
     const [result] = await connection.query(
       `INSERT INTO transactions
        (transaction_id, rrn, transaction_type, direction, sender_account, sender_name, sender_mobile,
         beneficiary_account, beneficiary_name, beneficiary_ifsc, amount, transaction_status,
         branch_code, initiated_by, response_code, response_message, transaction_date)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', ?, ?, 'IP', ?, NOW())`,
+       VALUES (?, ?, ?, 'OUTBOUND', ?, ?, ?, ?, ?, ?, ?, 'PENDING', ?, ?, 'IP', ?, NOW())`,
       [
         transactionId,
         rrn,
         transactionType,
-        direction,
+        senderAccount,
+        sender.customer_name || senderName || 'Valued Customer',
+        senderMobile,
+        beneficiaryAccount,
+        beneficiaryName,
+        beneficiaryIfsc,
+        amount,
+        sender.branch_code || branchCode || 'BR001',
+        initiatedBy,
+        remarks || msg
+      ]
+    );
+
+    // 3b. Insert INBOUND transaction record (for the receiver's view)
+    const inboundTransactionId = `RCV${transactionId.substring(3)}`;
+    await connection.query(
+      `INSERT INTO transactions
+       (transaction_id, rrn, transaction_type, direction, sender_account, sender_name, sender_mobile,
+        beneficiary_account, beneficiary_name, beneficiary_ifsc, amount, transaction_status,
+        branch_code, initiated_by, response_code, response_message, transaction_date)
+       VALUES (?, ?, ?, 'INBOUND', ?, ?, ?, ?, ?, ?, ?, 'PENDING', ?, ?, 'IP', ?, NOW())`,
+      [
+        inboundTransactionId,
+        rrn,
+        transactionType,
         senderAccount,
         sender.customer_name || senderName || 'Valued Customer',
         senderMobile,
@@ -332,9 +354,10 @@ async function updateApproval(req, res, approved) {
     const responseCode = approved ? '00' : 'RJ';
     const responseMessage = approved ? 'Transaction approved and funds transferred' : (remarks || 'Transaction rejected by checker');
 
+    // Update BOTH the OUTBOUND and INBOUND records by targeting their shared RRN
     await connection.query(
-      `UPDATE transactions SET transaction_status = ?, approved_by = ?, response_code = ?, response_message = ? WHERE transaction_id = ?`,
-      [newTransactionStatus, approvedBy, responseCode, responseMessage, transactionId]
+      `UPDATE transactions SET transaction_status = ?, approved_by = ?, response_code = ?, response_message = ? WHERE rrn = ?`,
+      [newTransactionStatus, approvedBy, responseCode, responseMessage, tx.rrn]
     );
 
     await connection.query(
