@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../../services/transaction.service';
@@ -27,15 +27,39 @@ interface ReversalTransaction {
 export class Reversal {
 
   searchValue = '';
-  status = 'All';
 
-  selectedTransaction: ReversalTransaction | null = null;
+ selectedTransaction: ReversalTransaction | null = null;
 
-  transactions: ReversalTransaction[] = [];
-  loading = false;
-  errorMessage = '';
+ transactions: ReversalTransaction[] = [];
+ loading = false;
+ errorMessage = '';
 
-  constructor(private transactionService: TransactionService) {}
+ constructor(
+   private transactionService: TransactionService,
+   private cdr: ChangeDetectorRef
+ ) {}
+
+ private normalizeTransactionStatus(status: unknown): ReversalTransaction['status'] {
+    const value = String(status ?? '').trim().toUpperCase();
+
+    if (['FAILED', 'REJECTED', 'RJ'].includes(value)) {
+      return 'Rejected';
+    }
+
+    if (['APPROVED', 'APPROVAL_GRANTED'].includes(value)) {
+      return 'Approved';
+    }
+
+    if (['SUCCESS', 'COMPLETED', 'SETTLED'].includes(value)) {
+      return 'Completed';
+    }
+
+    if (['PENDING', 'IN PROCESS', 'IP'].includes(value)) {
+      return 'Pending';
+    }
+
+    return 'Pending';
+  }
 
   ngOnInit(): void { this.loadTransactions(); }
 
@@ -44,15 +68,30 @@ export class Reversal {
     this.transactionService.getTransactions().subscribe({
       next: (response: any) => {
         this.loading = false;
-        const rows = Array.isArray(response?.data) ? response.data : [];
+        const rows = (Array.isArray(response?.data) ? response.data : [])
+          .filter((r: any) => {
+            const status = String(r?.transaction_status ?? '').trim().toUpperCase();
+            return ['FAILED', 'REJECTED', 'RJ'].includes(status);
+          })
+          .sort((a: any, b: any) => {
+            const aDate = new Date(a?.transaction_date || 0).getTime();
+            const bDate = new Date(b?.transaction_date || 0).getTime();
+            return bDate - aDate;
+          });
+
         this.transactions = rows.map((r: any) => ({
           transactionId: r.transaction_id, rrn: r.rrn, originalDate: r.transaction_date,
           customerName: r.sender_name || '—', accountNumber: r.sender_account, amount: Number(r.amount),
           reason: r.response_message || 'Reversal requested by operations',
-          status: String(r.transaction_status).toUpperCase() === 'FAILED' ? 'Rejected' : String(r.transaction_status).toUpperCase() === 'SUCCESS' ? 'Completed' : 'Pending'
+          status: this.normalizeTransactionStatus(r.transaction_status)
         }));
+        this.cdr.detectChanges();
       },
-      error: (error: any) => { this.loading = false; this.errorMessage = error?.error?.message || 'Unable to load reversal records.'; }
+      error: (error: any) => {
+        this.loading = false;
+        this.errorMessage = error?.error?.message || 'Unable to load reversal records.';
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -86,12 +125,7 @@ export class Reversal {
             .includes(search);
 
 
-        const matchesStatus =
-          this.status === 'All' ||
-          transaction.status === this.status;
-
-
-        return matchesSearch && matchesStatus;
+        return matchesSearch;
 
       }
     );
@@ -161,7 +195,6 @@ export class Reversal {
   clearFilters(): void {
 
     this.searchValue = '';
-    this.status = 'All';
 
   }
 
