@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../../services/transaction.service';
@@ -34,7 +34,10 @@ export class Reversal {
  loading = false;
  errorMessage = '';
 
- constructor(private transactionService: TransactionService) {}
+ constructor(
+   private transactionService: TransactionService,
+   private cdr: ChangeDetectorRef
+ ) {}
 
  private normalizeTransactionStatus(status: unknown): ReversalTransaction['status'] {
     const value = String(status ?? '').trim().toUpperCase();
@@ -82,8 +85,13 @@ export class Reversal {
           reason: r.response_message || 'Reversal requested by operations',
           status: this.normalizeTransactionStatus(r.transaction_status)
         }));
+        this.cdr.detectChanges();
       },
-      error: (error: any) => { this.loading = false; this.errorMessage = error?.error?.message || 'Unable to load reversal records.'; }
+      error: (error: any) => {
+        this.loading = false;
+        this.errorMessage = error?.error?.message || 'Unable to load reversal records.';
+        this.cdr.detectChanges();
+      }
     });
   }
 
