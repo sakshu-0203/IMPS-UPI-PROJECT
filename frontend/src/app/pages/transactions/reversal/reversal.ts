@@ -27,15 +27,14 @@ interface ReversalTransaction {
 export class Reversal {
 
   searchValue = '';
-  status = 'Rejected';
 
-  selectedTransaction: ReversalTransaction | null = null;
+ selectedTransaction: ReversalTransaction | null = null;
 
-  transactions: ReversalTransaction[] = [];
-  loading = false;
-  errorMessage = '';
+ transactions: ReversalTransaction[] = [];
+ loading = false;
+ errorMessage = '';
 
-  constructor(private transactionService: TransactionService) {}
+ constructor(private transactionService: TransactionService) {}
 
  private normalizeTransactionStatus(status: unknown): ReversalTransaction['status'] {
     const value = String(status ?? '').trim().toUpperCase();
@@ -66,10 +65,17 @@ export class Reversal {
     this.transactionService.getTransactions().subscribe({
       next: (response: any) => {
         this.loading = false;
-        const rows = (Array.isArray(response?.data) ? response.data : []).filter((r: any) => {
-          const status = String(r?.transaction_status ?? '').trim().toUpperCase();
-          return ['FAILED', 'REJECTED', 'RJ'].includes(status);
-        });
+        const rows = (Array.isArray(response?.data) ? response.data : [])
+          .filter((r: any) => {
+            const status = String(r?.transaction_status ?? '').trim().toUpperCase();
+            return ['FAILED', 'REJECTED', 'RJ'].includes(status);
+          })
+          .sort((a: any, b: any) => {
+            const aDate = new Date(a?.transaction_date || 0).getTime();
+            const bDate = new Date(b?.transaction_date || 0).getTime();
+            return bDate - aDate;
+          });
+
         this.transactions = rows.map((r: any) => ({
           transactionId: r.transaction_id, rrn: r.rrn, originalDate: r.transaction_date,
           customerName: r.sender_name || '—', accountNumber: r.sender_account, amount: Number(r.amount),
@@ -111,12 +117,7 @@ export class Reversal {
             .includes(search);
 
 
-        const matchesStatus =
-          this.status === 'All' ||
-          transaction.status === this.status;
-
-
-        return matchesSearch && matchesStatus;
+        return matchesSearch;
 
       }
     );
@@ -186,7 +187,6 @@ export class Reversal {
   clearFilters(): void {
 
     this.searchValue = '';
-    this.status = 'Rejected';
 
   }
 
