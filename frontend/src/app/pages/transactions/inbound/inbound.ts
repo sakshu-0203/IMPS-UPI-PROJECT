@@ -10,6 +10,7 @@ interface InboundTransaction {
   date: string;
   remitterName: string;
   remitterAccount: string;
+  beneficiaryName: string;
   beneficiaryAccount: string;
   amount: number;
   status: 'Success' | 'Pending' | 'Failed';
@@ -75,6 +76,7 @@ export class Inbound implements OnInit {
             date: r.transaction_date,
             remitterName: r.sender_name || '—', 
             remitterAccount: r.sender_account,
+            beneficiaryName: r.beneficiary_name || '—',
             beneficiaryAccount: r.beneficiary_account, 
             amount: Number(r.amount),
             status: String(r.transaction_status).toUpperCase() === 'SUCCESS' ? 'Success' : 
