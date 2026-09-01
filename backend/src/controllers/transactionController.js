@@ -25,7 +25,7 @@ const getTransactionById = async (req, res) => {
     if (!rows.length) return res.status(404).json({ success: false, message: 'Transaction not found.' });
     res.json({ success: true, data: rows[0] });
   } catch (error) {
-    console.error('Get transaction error:', error);
+    console.error('Get transaction error:', error);  
     res.status(500).json({ success: false, message: 'Failed to fetch transaction.' });
   }
 };

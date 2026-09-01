@@ -152,7 +152,12 @@ export class PendingApprovals implements OnInit {
 
   goToOutbound(): void {
     this.showSuccessModal = false;
-    this.router.navigate(['/transactions/outbound']);
+    const targetId = this.approvedReceipt?.transactionId;
+    if (targetId) {
+      this.router.navigate(['/transactions/outbound'], { queryParams: { id: targetId } });
+    } else {
+      this.router.navigate(['/transactions/outbound']);
+    }
   }
 
   goToDashboard(): void {
