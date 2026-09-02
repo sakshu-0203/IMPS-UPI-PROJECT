@@ -12,6 +12,7 @@ interface InboundTransaction {
   // Sender / Remitter
   remitterName: string;
   remitterAccount: string;
+  beneficiaryName: string;
   beneficiaryAccount: string;
 
   amount: number;
@@ -76,7 +77,8 @@ export class Inbound implements OnInit {
         this.transactions = rows.filter((r: any) => ['INBOUND', 'INWARD'].includes(String(r.direction).toUpperCase())).map((r: any) => ({
           transactionId: r.transaction_id, rrn: r.rrn, date: r.transaction_date,
           remitterName: r.sender_name || '—', remitterAccount: r.sender_account,
-          beneficiaryAccount: r.beneficiary_account, amount: Number(r.amount),
+          beneficiaryName: r.beneficiary_name || '—', beneficiaryAccount: r.beneficiary_account,
+          amount: Number(r.amount),
           status: String(r.transaction_status).toUpperCase() === 'SUCCESS' ? 'Success' : String(r.transaction_status).toUpperCase() === 'FAILED' ? 'Failed' : 'Pending',
           responseCode: r.response_code || '—'
         }));
