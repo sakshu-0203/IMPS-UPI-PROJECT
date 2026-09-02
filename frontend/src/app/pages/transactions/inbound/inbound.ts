@@ -63,7 +63,10 @@ export class Inbound implements OnInit {
   errorMessage: string = '';
 
 
-  constructor(private transactionService: TransactionService) {}
+  constructor(
+    private transactionService: TransactionService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void { this.loadTransactions(); }
 
@@ -82,8 +85,13 @@ export class Inbound implements OnInit {
           status: String(r.transaction_status).toUpperCase() === 'SUCCESS' ? 'Success' : String(r.transaction_status).toUpperCase() === 'FAILED' ? 'Failed' : 'Pending',
           responseCode: r.response_code || '—'
         }));
+        this.cdr.detectChanges();
       },
-      error: (error: any) => { this.loading = false; this.errorMessage = error?.error?.message || 'Unable to load inbound transactions.'; }
+      error: (error: any) => {
+        this.loading = false;
+        this.errorMessage = error?.error?.message || 'Unable to load inbound transactions.';
+        this.cdr.detectChanges();
+      }
     });
 
   }
