@@ -259,7 +259,10 @@
               *ngFor="
                 let transaction
                 of recentTransactions
-              ">
+              "
+              (click)="viewTransaction(transaction)"
+              style="cursor: pointer;"
+              title="Click to view transaction details">
 
 
               <td class="transaction-id">

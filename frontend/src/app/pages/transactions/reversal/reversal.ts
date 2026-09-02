@@ -98,10 +98,13 @@ export class Reversal {
 
   get filteredTransactions(): ReversalTransaction[] {
 
+
     const search = this.searchValue
       .trim()
       .toLowerCase();
 
+
+      
     return this.transactions.filter(
       transaction => {
 

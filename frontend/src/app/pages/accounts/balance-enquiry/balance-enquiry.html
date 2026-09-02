@@ -1,1 +1,356 @@
-<div class="page-shell"><div class="page-header"><div><h1>Balance Enquiry</h1><p>Check the current available balance for an account.</p></div></div>@if(errorMessage){<div class="message error-message">{{errorMessage}}</div>}<section class="search-card"><label>Account Number *</label><div class="search-row"><input [(ngModel)]="accountNumber" maxlength="18" inputmode="numeric" placeholder="Enter account number"><button class="btn-primary" (click)="search()" [disabled]="loading">{{loading?'Checking...':'Check Balance'}}</button><button class="btn-secondary" (click)="clear()">Clear</button></div></section>@if(account){<section class="balance-card"><span>Customer</span><strong>{{account.customer_name}}</strong><span>Account Type</span><strong>{{account.account_type||'—'}}</strong><span>Available Balance</span><strong class="amount">₹ {{account.balance | number:'1.2-2'}}</strong><span>Branch</span><strong>{{account.branch_code||'—'}}</strong><span>Status</span><strong>{{account.status}}</strong></section>}</div>
+<div class="page-shell">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <h1>Balance Enquiry</h1>
+      <p>Check the current available balance for an account.</p>
+    </div>
+  </div>
+
+
+  <!-- ERROR MESSAGE -->
+  @if (errorMessage) {
+    <div class="message error-message">
+      {{ errorMessage }}
+    </div>
+  }
+
+
+  <!-- SEARCH CARD -->
+  <section class="search-card">
+
+  <div class="search-row">
+
+    <!-- ACCOUNT NUMBER -->
+    <div class="search-field">
+
+      <label for="accountNumber">
+        Account Number *
+      </label>
+
+      <input
+        id="accountNumber"
+        type="text"
+        [(ngModel)]="accountNumber"
+        maxlength="18"
+        inputmode="numeric"
+        autocomplete="off"
+        placeholder="Enter account number"
+        (input)="onAccountNumberInput()"
+        (keydown.enter)="search()"
+      />
+
+  
+
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="action-row">
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="search()"
+      >
+        Search
+      </button>
+
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="clear()"
+      >
+        Clear
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+  <!-- SEARCH RESULTS -->
+  @if (accounts.length > 0) {
+
+    <section class="result-card">
+
+      <!-- RESULT HEADER -->
+      <!-- <div class="result-header">
+
+        <div>
+          <h2>Account Results</h2>
+
+          <p>
+            {{ accounts.length }} matching account(s) found
+          </p>
+        </div>
+
+      </div> -->
+
+
+      <!-- TABLE -->
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Account Number
+              </th>
+
+              <th>
+                Account Holder
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            @for (
+              account of accounts;
+              track account.account_number
+            ) {
+
+              <tr
+                class="account-row"
+                (click)="selectAccount(account)"
+                [class.selected-row]="isSelected(account)"
+              >
+
+                <!-- ACCOUNT NUMBER -->
+                <td>
+
+                  <strong class="account-number">
+                    {{ account.account_number }}
+                  </strong>
+
+                </td>
+
+
+                <!-- CUSTOMER NAME -->
+                <td>
+
+                  <div class="customer-cell">
+
+                    <strong>
+                      {{ account.customer_name }}
+                    </strong>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  }
+
+
+  <!-- NO RESULT -->
+  @if (
+    accountNumber.trim() &&
+    !loading &&
+    accounts.length === 0 &&
+    !errorMessage
+  ) {
+
+    <!-- <section class="empty-card">
+
+      <div class="empty-icon">
+        🔍
+      </div>
+
+      <h3>
+        No accounts found
+      </h3>
+
+      <p>
+        No account matches the entered number.
+      </p>
+
+    </section> -->
+
+  }
+
+
+  <!-- BALANCE DETAILS MODAL -->
+  @if (
+    showBalanceModal &&
+    selectedAccount
+  ) {
+
+    <div
+      class="modal-backdrop"
+      (click)="closeBalanceModal()"
+      role="presentation"
+    >
+
+      <div
+        class="balance-modal"
+        (click)="$event.stopPropagation()"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="balance-modal-title"
+      >
+
+        <!-- MODAL HEADER -->
+        <div class="modal-header">
+
+          <div>
+
+            <h3 id="balance-modal-title">
+              Balance Details
+            </h3>
+
+            <p>
+              Account information
+            </p>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="btn-close"
+            (click)="closeBalanceModal()"
+            aria-label="Close balance modal"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <!-- MODAL BODY -->
+        <div class="modal-body">
+
+          <!-- ACCOUNT NUMBER -->
+          <div class="detail-row">
+
+            <span>
+              Account Number
+            </span>
+
+            <strong>
+              {{ selectedAccount.account_number }}
+            </strong>
+
+          </div>
+
+
+          <!-- ACCOUNT HOLDER -->
+          <div class="detail-row">
+
+            <span>
+              Account Holder Name
+            </span>
+
+            <strong>
+              {{ selectedAccount.customer_name }}
+            </strong>
+
+          </div>
+
+
+          <!-- ACCOUNT TYPE -->
+          <div class="detail-row">
+
+            <span>
+              Account Type
+            </span>
+
+            <strong>
+              {{ selectedAccount.account_type || '—' }}
+            </strong>
+
+          </div>
+
+
+          <!-- BRANCH -->
+          <div class="detail-row">
+
+            <span>
+              Branch
+            </span>
+
+            <strong>
+              {{ selectedAccount.branch_code || '—' }}
+            </strong>
+
+          </div>
+
+
+          <!-- BALANCE -->
+          <div class="detail-row balance-row">
+
+            <span>
+              Available Balance
+            </span>
+
+            <strong class="balance-value">
+
+              ₹{{ selectedAccount.balance | number:'1.2-2' }}
+
+            </strong>
+
+          </div>
+
+
+          <!-- STATUS -->
+          <div class="detail-row">
+
+            <span>
+              Status
+            </span>
+
+            <strong
+              class="status-badge"
+              [class.active]="
+                (selectedAccount.status || 'ACTIVE') === 'ACTIVE'
+              "
+            >
+              {{ selectedAccount.status || 'ACTIVE' }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- MODAL FOOTER -->
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            class="btn-secondary"
+            (click)="closeBalanceModal()"
+          >
+            Close
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

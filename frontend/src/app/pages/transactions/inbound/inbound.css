@@ -868,3 +868,18 @@ tbody td {
   }
 
 }
+.beneficiary-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.beneficiary-name {
+  font-weight: 600;
+  
+}
+
+.beneficiary-account {
+  font-size: 9px;
+  color: #666;
+}

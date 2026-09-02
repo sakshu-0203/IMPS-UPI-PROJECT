@@ -1,10 +1,10 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 import { TransactionService } from '../../../services/transaction.service';
-import { VALIDATION } from '../../../utils/validation';
+import { VALIDATION, normalizeTransactionDirection } from '../../../utils/validation';
 
 @Component({
   selector: 'app-search',
@@ -45,6 +45,7 @@ export class Search implements OnInit {
 
   constructor(
     private transactionService: TransactionService,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -132,8 +133,10 @@ export class Search implements OnInit {
   }
 
   viewDetails(tx: any): void {
-    this.selectedTransaction = tx;
-    this.cdr.detectChanges();
+    const direction = normalizeTransactionDirection(tx);
+    const txnId = tx.transaction_id || tx.transactionId || tx.id || tx.rrn;
+    const targetRoute = direction === 'INBOUND' ? '/transactions/inbound' : '/transactions/outbound';
+    this.router.navigate([targetRoute], { queryParams: { id: txnId } });
   }
 
   closeDetailsModal(): void {

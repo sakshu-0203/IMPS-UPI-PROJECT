@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../../services/transaction.service';
+import { OperationsService } from '../../../services/operations.service';
 
 interface InboundTransaction {
   transactionId: string;
@@ -11,9 +12,6 @@ interface InboundTransaction {
   // Sender / Remitter
   remitterName: string;
   remitterAccount: string;
-
-  // Receiver / Beneficiary
-  beneficiaryName: string;
   beneficiaryAccount: string;
 
   amount: number;
@@ -64,189 +62,26 @@ export class Inbound implements OnInit {
   errorMessage: string = '';
 
 
-  constructor(
-    private transactionService: TransactionService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  constructor(private transactionService: TransactionService) {}
 
-
-  // =========================================================
-  // PAGE INIT
-  // =========================================================
-
-  ngOnInit(): void {
-    this.loadTransactions();
-  }
-
-
-  // =========================================================
-  // LOAD INBOUND TRANSACTIONS
-  // =========================================================
+  ngOnInit(): void { this.loadTransactions(); }
 
   loadTransactions(): void {
 
     this.loading = true;
-    this.errorMessage = '';
-
     this.transactionService.getTransactions().subscribe({
-
       next: (response: any) => {
-
-        console.log('[Inbound] API Response:', response);
-
-        const rows = Array.isArray(response?.data)
-          ? response.data
-          : [];
-
-
-        // =====================================================
-        // FILTER ONLY INBOUND / INWARD
-        // =====================================================
-
-        this.transactions = rows
-
-          .filter((r: any) => {
-
-            const direction = String(
-              r?.direction || ''
-            )
-              .trim()
-              .toUpperCase();
-
-            return (
-              direction === 'INBOUND' ||
-              direction === 'INWARD'
-            );
-
-          })
-
-
-          // ===================================================
-          // MAP API RESPONSE
-          // ===================================================
-
-          .map((r: any) => {
-
-            const apiStatus = String(
-              r?.transaction_status || ''
-            )
-              .trim()
-              .toUpperCase();
-
-
-            let status: 'Success' | 'Pending' | 'Failed';
-
-            if (apiStatus === 'SUCCESS') {
-
-              status = 'Success';
-
-            } else if (apiStatus === 'FAILED') {
-
-              status = 'Failed';
-
-            } else {
-
-              status = 'Pending';
-
-            }
-
-
-            return {
-
-              // ------------------------------------------------
-              // TRANSACTION
-              // ------------------------------------------------
-
-              transactionId:
-                r?.transaction_id || '—',
-
-              rrn:
-                r?.rrn || '—',
-
-              date:
-                r?.transaction_date || '—',
-
-
-              // ------------------------------------------------
-              // REMITTER / SENDER
-              // ------------------------------------------------
-
-              remitterName:
-                r?.sender_name || '—',
-
-              remitterAccount:
-                r?.sender_account || '—',
-
-
-              // ------------------------------------------------
-              // BENEFICIARY / RECEIVER
-              // ------------------------------------------------
-
-              beneficiaryName:
-                r?.beneficiary_name || '—',
-
-              beneficiaryAccount:
-                r?.beneficiary_account || '—',
-
-
-              // ------------------------------------------------
-              // AMOUNT
-              // ------------------------------------------------
-
-              amount:
-                Number(r?.amount || 0),
-
-
-              // ------------------------------------------------
-              // STATUS
-              // ------------------------------------------------
-
-              status,
-
-
-              // ------------------------------------------------
-              // RESPONSE CODE
-              // ------------------------------------------------
-
-              responseCode:
-                r?.response_code || '—'
-
-            };
-
-          });
-
-
-        console.log(
-          '[Inbound] Loaded transactions:',
-          this.transactions
-        );
-
         this.loading = false;
-
-        this.cdr.detectChanges();
-
+        const rows = Array.isArray(response?.data) ? response.data : [];
+        this.transactions = rows.filter((r: any) => ['INBOUND', 'INWARD'].includes(String(r.direction).toUpperCase())).map((r: any) => ({
+          transactionId: r.transaction_id, rrn: r.rrn, date: r.transaction_date,
+          remitterName: r.sender_name || '—', remitterAccount: r.sender_account,
+          beneficiaryAccount: r.beneficiary_account, amount: Number(r.amount),
+          status: String(r.transaction_status).toUpperCase() === 'SUCCESS' ? 'Success' : String(r.transaction_status).toUpperCase() === 'FAILED' ? 'Failed' : 'Pending',
+          responseCode: r.response_code || '—'
+        }));
       },
-
-
-      error: (error: any) => {
-
-        console.error(
-          '[Inbound] API Error:',
-          error
-        );
-
-        this.loading = false;
-
-        this.transactions = [];
-
-        this.errorMessage =
-          error?.error?.message ||
-          'Unable to load inbound transactions.';
-
-        this.cdr.detectChanges();
-
-      }
-
+      error: (error: any) => { this.loading = false; this.errorMessage = error?.error?.message || 'Unable to load inbound transactions.'; }
     });
 
   }
