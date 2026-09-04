@@ -1,1 +1,339 @@
-<div class="page-shell"><div class="page-header"><div><h1>API Logs</h1><p>Recent API activity recorded by the backend.</p></div><button class="btn-primary" (click)="load()">Refresh</button></div>@if(errorMessage){<div class="message error-message">{{errorMessage}}</div>}<section class="result-card"><div class="table-wrapper"><table><thead><tr><th>API</th><th>Method</th><th>Endpoint</th><th>Status</th><th>Execution</th><th>Created</th></tr></thead><tbody>@for(r of rows;track r.id){<tr><td>{{r.api_name}}</td><td>{{r.request_method}}</td><td>{{r.endpoint}}</td><td>{{r.status_code}}</td><td>{{r.execution_time_ms}} ms</td><td>{{r.created_at|date:'dd MMM yyyy, HH:mm:ss'}}</td></tr>}@empty{<tr><td colspan="6">No API logs found.</td></tr>}</tbody></table></div></section></div>
+<div class="api-logs-page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <h1>API Logs</h1>
+      <p>Monitor and track API requests, responses, and system activity.</p>
+    </div>
+    <button 
+      type="button" 
+      class="refresh-btn" 
+      (click)="refresh()" 
+      [disabled]="loading">
+      <i class="bi bi-arrow-clockwise" [class.spin]="loading"></i>
+      {{ loading ? 'Refreshing...' : 'Refresh' }}
+    </button>
+  </div>
+
+  <!-- ERROR MESSAGE -->
+  <div class="error-message" *ngIf="errorMessage">
+    <i class="bi bi-info-circle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- LOADING STATE -->
+  <div class="loading-state" *ngIf="loading && allLogs.length === 0">
+    <div class="spinner">
+      <i class="bi bi-arrow-repeat"></i>
+    </div>
+    <p>Loading API logs...</p>
+  </div>
+
+  <!-- CONTENT -->
+  <ng-container *ngIf="!loading || allLogs.length > 0">
+
+    <!-- SUMMARY CARDS -->
+    <div class="summary-grid">
+      <div 
+        *ngFor="let card of summaryCards" 
+        class="summary-card"
+        [class]="card.className">
+        <div class="card-icon">
+          <i class="bi" [class]="'bi-' + card.icon"></i>
+        </div>
+        <div class="card-content">
+          <span class="card-label">{{ card.label }}</span>
+          <h3 class="card-value">{{ card.value }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERFORMANCE SECTION -->
+    <div class="performance-section">
+      <h3>API Performance Overview</h3>
+      
+      <div class="performance-grid">
+        <!-- Success Rate Card -->
+        <div class="perf-card">
+          <div class="perf-label">Success Rate</div>
+          <div class="perf-value">{{ performanceData.successRate }}%</div>
+          <div class="perf-bar">
+            <div class="perf-bar-fill" [style.width.%]="performanceData.successRate"></div>
+          </div>
+        </div>
+
+        <!-- Total Requests Card -->
+        <div class="perf-card">
+          <div class="perf-label">Total Requests</div>
+          <div class="perf-value">{{ allLogs.length }}</div>
+          <div class="perf-mini-chart">
+            <div class="chart-bar" *ngFor="let hour of ['0:00','1:00','2:00','3:00']">
+              <div class="bar" [style.height.%]="30"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Avg Response Time Card -->
+        <div class="perf-card">
+          <div class="perf-label">Average Response Time</div>
+          <div class="perf-value">{{ allLogs.length > 0 ? (allLogs.reduce((sum,log)=>sum+log.responseTime,0)/allLogs.length | number:'1.0-0') : 0 }}ms</div>
+          <div class="perf-mini-stats">
+            <span class="stat-item"><strong>Min:</strong> {{ getMinResponseTime() }}ms</span>
+          </div>
+        </div>
+
+        <!-- Requests by Status Card -->
+        <div class="perf-card">
+          <div class="perf-label">Requests by Status</div>
+          <div class="status-distribution">
+            <div class="status-item success">
+              <span class="label">Success</span>
+              <span class="count">{{ (allLogs | slice:0:10).filter(l=>l.status==='SUCCESS').length }}</span>
+            </div>
+            <div class="status-item failed">
+              <span class="label">Failed</span>
+              <span class="count">{{ (allLogs | slice:0:10).filter(l=>l.status==='FAILED').length }}</span>
+            </div>
+            <div class="status-item pending">
+              <span class="label">Pending</span>
+              <span class="count">{{ (allLogs | slice:0:10).filter(l=>l.status==='PENDING').length }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS SECTION -->
+    <div class="results-card">
+      <!-- Header with count -->
+      <div class="results-header">
+        <div>
+          <h3>API Logs</h3>
+          <p>Showing {{ paginatedLogs.length }} of {{ filteredLogs.length }} record(s)</p>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="hasSearched && filteredLogs.length === 0">
+        <i class="bi bi-inbox"></i>
+        <p>No API logs found.</p>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper" *ngIf="paginatedLogs.length > 0">
+        <table class="logs-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>API Name</th>
+              <th>HTTP Method</th>
+              <th>Endpoint</th>
+              <th>Request ID</th>
+              <th>Transaction ID</th>
+              <th>HTTP Status</th>
+              <th>Status</th>
+              <th>Response Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let log of paginatedLogs" class="log-row">
+              <td class="timestamp-col">
+                {{ log.timestamp | date:'dd MMM yyyy HH:mm:ss' }}
+              </td>
+              <td class="api-name-col">
+                <span class="api-badge">{{ log.apiName }}</span>
+              </td>
+              <td class="method-col">
+                <span class="method-badge" [class]="'method-' + log.httpMethod.toLowerCase()">
+                  {{ log.httpMethod }}
+                </span>
+              </td>
+              <td class="endpoint-col">
+                {{ log.endpoint }}
+              </td>
+              <td class="request-id-col">
+                <span class="id-text">{{ log.requestId }}</span>
+              </td>
+              <td class="transaction-id-col">
+                <span class="id-text" *ngIf="log.transactionId !== '-'">{{ log.transactionId }}</span>
+                <span class="text-muted" *ngIf="log.transactionId === '-'">-</span>
+              </td>
+              <td class="status-code-col">
+                <span class="http-status" [class]="log.httpStatus >= 200 && log.httpStatus < 300 ? 'http-success' : log.httpStatus >= 400 ? 'http-error' : 'http-info'">
+                  {{ log.httpStatus }}
+                </span>
+              </td>
+              <td class="status-col">
+                <span class="status-badge" [class]="'status-' + log.status.toLowerCase()">
+                  <i class="bi" [class]="getStatusIcon(log.status)"></i>
+                  {{ log.status }}
+                </span>
+              </td>
+              <td class="response-time-col">
+                <span class="response-time" [class]="log.responseTime > 1000 ? 'slow' : log.responseTime > 500 ? 'medium' : 'fast'">
+                  {{ log.responseTime }} ms
+                </span>
+              </td>
+              <td class="action-col">
+                <button 
+                  type="button" 
+                  class="btn-view-details"
+                  (click)="openDetails(log)">
+                  <i class="bi bi-eye"></i> View Details
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-section" *ngIf="filteredLogs.length > pageSize">
+        <div class="pagination-info">
+          Page {{ currentPage }} of {{ totalPages }}
+        </div>
+        <div class="pagination-controls">
+          <button 
+            type="button" 
+            class="btn-pagination"
+            [disabled]="currentPage === 1"
+            (click)="prevPage()">
+            <i class="bi bi-chevron-left"></i> Previous
+          </button>
+          
+          <div class="page-numbers">
+            <button 
+              *ngFor="let page of pageNumbers" 
+              type="button"
+              class="page-number"
+              [class.active]="page === currentPage"
+              (click)="goToPage(page)">
+              {{ page }}
+            </button>
+          </div>
+          
+          <button 
+            type="button" 
+            class="btn-pagination"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()">
+            Next <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>
+
+<!-- DETAILS MODAL -->
+<div class="modal-backdrop" *ngIf="showDetailsModal" (click)="closeModal()">
+  <div class="details-modal" (click)="$event.stopPropagation()">
+    
+    <!-- Modal Header -->
+    <div class="modal-header" [ngClass]="getStatusLowerCase(selectedLog?.status)">
+      <div class="modal-title">
+        <h3>{{ selectedLog?.apiName }}</h3>
+        <button 
+          type="button" 
+          class="btn-close"
+          (click)="closeModal()">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+      <p class="modal-subtitle">Request ID: {{ selectedLog?.requestId }}</p>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      
+      <!-- Request Details Grid -->
+      <div class="details-section">
+        <h4>Request Details</h4>
+        <div class="details-grid">
+          <div class="detail-item">
+            <span class="detail-label">Request ID</span>
+            <span class="detail-value">{{ selectedLog?.requestId }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Transaction ID</span>
+            <span class="detail-value">{{ selectedLog?.transactionId || '-' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">API Name</span>
+            <span class="detail-value">{{ selectedLog?.apiName }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">HTTP Method</span>
+            <span class="detail-value">
+              <span class="method-badge" [class]="'method-' + getMethodLowerCase(selectedLog?.httpMethod)">
+                {{ selectedLog?.httpMethod }}
+              </span>
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Endpoint</span>
+            <span class="detail-value">{{ selectedLog?.endpoint }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Timestamp</span>
+            <span class="detail-value">{{ selectedLog?.timestamp | date:'dd MMM yyyy HH:mm:ss' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">HTTP Status</span>
+            <span class="detail-value">
+              <span class="http-status" [class]="(selectedLog?.httpStatus ?? 0) >= 200 && (selectedLog?.httpStatus ?? 0) < 300 ? 'http-success' : (selectedLog?.httpStatus ?? 0) >= 400 ? 'http-error' : 'http-info'">
+                {{ selectedLog?.httpStatus }}
+              </span>
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Response Time</span>
+            <span class="detail-value">{{ selectedLog?.responseTime }} ms</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">
+              <span class="status-badge" [class]="'status-' + getStatusLowerCase(selectedLog?.status)">
+                {{ selectedLog?.status }}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Request Headers -->
+      <div class="details-section">
+        <h4>Request Headers</h4>
+        <pre class="json-block">{{ formatJson(selectedLog?.requestHeaders) }}</pre>
+      </div>
+
+      <!-- Request Body -->
+      <div class="details-section">
+        <h4>Request Body</h4>
+        <pre class="json-block">{{ formatJson(selectedLog?.requestBody) }}</pre>
+      </div>
+
+      <!-- Response -->
+      <div class="details-section">
+        <h4>Response</h4>
+        <pre class="json-block">{{ formatJson(selectedLog?.response) }}</pre>
+      </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button 
+        type="button" 
+        class="btn-close-modal"
+        (click)="closeModal()">
+        Close
+      </button>
+    </div>
+
+  </div>
+</div>

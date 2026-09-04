@@ -81,7 +81,17 @@ const reconciliationReport = async (_req,res)=>{
 };
 
 const apiLogs = async (_req,res)=>{
-  try { const [rows]=await pool.query(`SELECT * FROM api_logs ORDER BY created_at DESC, id DESC LIMIT 200`); res.json({success:true,data:rows}); }
+  try {
+    const [rows]=await pool.query(`SELECT * FROM api_logs ORDER BY created_at DESC, id DESC LIMIT 200`);
+    const data = rows.map((row) => ({
+      ...row,
+      request_headers: row.request_headers || {
+        'Content-Type': 'application/json',
+        'X-Request-ID': row.request_id || `LOG-${row.id}`
+      }
+    }));
+    res.json({success:true,data});
+  }
   catch(e){console.error(e);res.status(500).json({success:false,message:'Unable to load API logs.'});}
 };
 

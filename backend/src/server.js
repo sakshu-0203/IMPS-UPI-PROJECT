@@ -39,6 +39,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   const startedAt = Date.now();
+  let responseBody = null;
+  const originalJson = res.json.bind(res);
+  res.json = (body) => {
+    responseBody = body;
+    return originalJson(body);
+  };
   console.log(`${req.method} ${req.originalUrl}`);
   res.on('finish', async () => {
     try {
@@ -51,7 +57,7 @@ app.use((req, res, next) => {
           req.method,
           req.originalUrl,
           req.method === 'GET' ? null : JSON.stringify(req.body || {}),
-          null,
+          responseBody ? JSON.stringify(responseBody) : null,
           res.statusCode,
           Date.now() - startedAt
         ]
