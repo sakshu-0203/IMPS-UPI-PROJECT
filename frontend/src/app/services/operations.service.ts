@@ -25,7 +25,11 @@ export class OperationsService {
   getTransactionReport(status = '', direction = '') { return this.http.get<any>(`${this.apiUrl}/reports/transactions`, { params: { status, direction } }); }
   getSettlementReport() { return this.http.get<any>(`${this.apiUrl}/reports/settlement`); }
   getReconciliationReport() { return this.http.get<any>(`${this.apiUrl}/reports/reconciliation`); }
-  getApiLogs() { return this.http.get<any>(`${this.apiUrl}/monitoring/api-logs`); }
+  getApiLogs() {
+    return this.http.get<any>(`${this.apiUrl}/monitoring/api-logs`, {
+      params: { refresh: Date.now().toString() }
+    });
+  }
   getAlerts() { return this.http.get<any>(`${this.apiUrl}/monitoring/alerts`); }
   getSystemHealth() { return this.http.get<any>(`${this.apiUrl}/monitoring/system-health`); }
   getUsers() { return this.http.get<any>(`${this.apiUrl}/settings/users`); }
