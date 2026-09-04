@@ -1,1 +1,107 @@
-<div class="page-shell"><div class="page-header"><div><h1>Settlement Reports</h1><p>Daily settlement summary based on transaction status.</p></div></div>@if(errorMessage){<div class="message error-message">{{errorMessage}}</div>}<section class="result-card"><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Total</th><th>Successful</th><th>Pending</th><th>Failed</th><th>Total Amount</th></tr></thead><tbody>@for(r of rows;track r.report_date){<tr><td>{{r.report_date|date:'dd MMM yyyy'}}</td><td>{{r.total_transactions}}</td><td>{{r.successful}}</td><td>{{r.pending}}</td><td>{{r.failed}}</td><td>₹ {{r.total_amount|number:'1.2-2'}}</td></tr>}@empty{<tr><td colspan="6">No settlement data found.</td></tr>}</tbody></table></div></section></div>
+
+<div class="page-shell">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <h1>Settlement Reports</h1>
+      <p>Daily settlement summary based on transaction status.</p>
+    </div>
+
+    <button class="refresh-btn" (click)="load()" [disabled]="loading">
+      {{ loading ? 'Loading...' : 'Refresh' }}
+    </button>
+  </div>
+
+
+  <!-- ERROR MESSAGE -->
+  @if (errorMessage) {
+    <div class="message error-message">
+      {{ errorMessage }}
+    </div>
+  }
+
+
+  <!-- LOADING -->
+  @if (loading) {
+    <div class="message loading-message">
+      Loading settlement report...
+    </div>
+  }
+
+
+  <!-- RESULT CARD -->
+  <section class="result-card">
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Successful</th>
+            <th>Pending</th>
+            <th>Failed</th>
+            <th>Total Amount</th>
+          </tr>
+        </thead>
+
+
+        <tbody>
+
+          @for (r of rows; track $index) {
+
+            <tr>
+
+              <td>
+                {{ r.report_date | date:'dd MMM yyyy' }}
+              </td>
+
+              <td>
+                {{ r.total_transactions }}
+              </td>
+
+              <td>
+                {{ r.successful }}
+              </td>
+
+              <td>
+                {{ r.pending }}
+              </td>
+
+              <td>
+                {{ r.failed }}
+              </td>
+
+              <td>
+                ₹ {{ r.total_amount | number:'1.2-2' }}
+              </td>
+
+            </tr>
+
+          }
+
+          @empty {
+
+            @if (!loading) {
+              <tr>
+                <td colspan="6" class="no-data">
+                  No settlement data found.
+                </td>
+              </tr>
+            }
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+</div>
+

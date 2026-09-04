@@ -1,1 +1,247 @@
-<div class="page-shell"><div class="page-header"><div><h1>Transaction Reports</h1><p>Review transaction activity from the live database.</p></div></div>@if(errorMessage){<div class="message error-message">{{errorMessage}}</div>}<section class="search-card"><select [(ngModel)]="status"><option value="">All Status</option><option>PENDING</option><option>SUCCESS</option><option>FAILED</option></select><select [(ngModel)]="direction"><option value="">All Directions</option><option>INBOUND</option><option>OUTBOUND</option><option>INWARD</option><option>OUTWARD</option></select><button class="btn-primary" (click)="load()">Apply</button><button class="btn-secondary" (click)="clear()">Clear</button></section><section class="result-card"><div class="table-wrapper"><table><thead><tr><th>Transaction</th><th>RRN</th><th>Type</th><th>Direction</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>@for(r of rows;track r.transaction_id){<tr><td>{{r.transaction_id}}</td><td>{{r.rrn}}</td><td>{{r.transaction_type}}</td><td>{{r.direction}}</td><td>₹ {{r.amount|number:'1.2-2'}}</td><td>{{r.transaction_status}}</td><td>{{r.transaction_date|date:'dd MMM yyyy, HH:mm'}}</td></tr>}@empty{<tr><td colspan="7">No records found.</td></tr>}</tbody></table></div></section></div>
+    
+<div class="page-shell">
+
+    <div class="page-header">
+        <div>
+            <h1>Transaction Reports</h1>
+            <p>Review transaction activity from the live database.</p>
+        </div>
+    </div>
+
+
+    @if (errorMessage) {
+        <div class="message error-message">
+            {{ errorMessage }}
+        </div>
+    }
+
+
+    <!-- FILTER SECTION -->
+    <section class="search-card">
+
+        <!-- STATUS -->
+        <select [(ngModel)]="status">
+
+            <option value="">
+                All Status
+            </option>
+
+            <option value="PENDING">
+                PENDING
+            </option>
+
+            <option value="SUCCESS">
+                SUCCESS
+            </option>
+
+            <option value="FAILED">
+                FAILED
+            </option>
+
+        </select>
+
+
+        <!-- DIRECTION -->
+        <select [(ngModel)]="direction">
+
+            <option value="">
+                All Directions
+            </option>
+
+            <option value="INBOUND">
+                INBOUND
+            </option>
+
+            <option value="OUTBOUND">
+                OUTBOUND
+            </option>
+
+            <option value="INWARD">
+                INWARD
+            </option>
+
+            <option value="OUTWARD">
+                OUTWARD
+            </option>
+
+        </select>
+
+
+        <!-- FROM DATE -->
+        <div class="date-field">
+
+            <label>
+                From Date
+            </label>
+
+            <input
+                type="date"
+                [(ngModel)]="fromDate"
+            />
+
+        </div>
+
+
+        <!-- TO DATE -->
+        <div class="date-field">
+
+            <label>
+                To Date
+            </label>
+
+            <input
+                type="date"
+                [(ngModel)]="toDate"
+            />
+
+        </div>
+
+
+        <!-- MONTH -->
+        <!-- <div class="date-field">
+
+            <label>
+                Month
+            </label>
+
+            <input
+                type="month"
+                [(ngModel)]="selectedMonth"
+            />
+
+        </div> -->
+
+
+        <!-- APPLY -->
+        <button
+            class="btn-primary"
+            type="button"
+            (click)="applyFilter()">
+
+            Apply
+
+        </button>
+
+
+        <!-- CLEAR -->
+        <button
+            class="btn-secondary"
+            type="button"
+            (click)="clear()">
+
+            Clear
+
+        </button>
+
+
+        <!-- DOWNLOAD -->
+        <button
+            class="btn-download"
+            type="button"
+            (click)="downloadReport()">
+
+            ⬇ Download Report
+
+        </button>
+
+    </section>
+
+
+
+    <!-- RESULT TABLE -->
+    <section class="result-card">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Transaction</th>
+                        <th>RRN</th>
+                        <th>Type</th>
+                        <th>Direction</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @if (loading) {
+
+                        <tr>
+
+                            <td colspan="7">
+                                Loading transactions...
+                            </td>
+
+                        </tr>
+
+                    } @else {
+
+                        @for (
+                            r of rows;
+                            track r.transaction_id
+                        ) {
+
+                            <tr>
+
+                                <td>
+                                    {{ r.transaction_id }}
+                                </td>
+
+                                <td>
+                                    {{ r.rrn }}
+                                </td>
+
+                                <td>
+                                    {{ r.transaction_type }}
+                                </td>
+
+                                <td>
+                                    {{ r.direction }}
+                                </td>
+
+                                <td>
+                                    ₹ {{ r.amount | number:'1.2-2' }}
+                                </td>
+
+                                <td>
+                                    {{ r.transaction_status }}
+                                </td>
+
+                                <td>
+                                    {{ r.transaction_date | date:'dd MMM yyyy, HH:mm' }}
+                                </td>
+
+                            </tr>
+
+                        } @empty {
+
+                            <tr>
+
+                                <td colspan="7">
+                                    No records found.
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
