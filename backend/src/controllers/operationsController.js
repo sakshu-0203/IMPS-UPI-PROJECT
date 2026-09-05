@@ -13,25 +13,111 @@ const listAccounts = async (req, res) => {
   } catch (e) { console.error(e); res.status(500).json({ success: false, message: 'Unable to load accounts.' }); }
 };
 
+
 const accountStatement = async (req, res) => {
   try {
     const account = clean(req.params.accountNumber);
     const from = clean(req.query.from);
     const to = clean(req.query.to);
-    if (!patterns.account.test(account)) return res.status(400).json({ success: false, message: 'Enter a valid account number.' });
-    if (from && !/^\d{4}-\d{2}-\d{2}$/.test(from)) return res.status(400).json({ success: false, message: 'Invalid from date.' });
-    if (to && !/^\d{4}-\d{2}-\d{2}$/.test(to)) return res.status(400).json({ success: false, message: 'Invalid to date.' });
-    if (from && to && new Date(from) > new Date(to)) return res.status(400).json({ success: false, message: 'From date cannot be after to date.' });
-    let sql = `SELECT transaction_id, rrn, direction, sender_account, beneficiary_account, amount, transaction_status, transaction_date FROM transactions WHERE (sender_account = ? OR beneficiary_account = ?)`;
+
+    if (!patterns.account.test(account)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Enter a valid account number.'
+      });
+    }
+
+    if (from && !/^\d{4}-\d{2}-\d{2}$/.test(from)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid from date.'
+      });
+    }
+
+    if (to && !/^\d{4}-\d{2}-\d{2}$/.test(to)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid to date.'
+      });
+    }
+
+    if (from && to && new Date(from) > new Date(to)) {
+      return res.status(400).json({
+        success: false,
+        message: 'From date cannot be after to date.'
+      });
+    }
+
+  
+    let sql = `
+      SELECT
+        t.transaction_id,
+        t.rrn,
+        t.direction,
+
+        t.sender_account,
+        sender.customer_name AS customer_name,
+
+        t.beneficiary_account,
+        beneficiary.customer_name AS beneficiary_name,
+
+        t.amount,
+        t.transaction_status,
+        t.transaction_date
+
+      FROM transactions t
+
+      LEFT JOIN accounts sender
+        ON sender.account_number = t.sender_account
+
+      LEFT JOIN beneficiaries beneficiary
+        ON beneficiary.account_number = t.beneficiary_account
+
+      WHERE (
+        t.sender_account = ?
+        OR t.beneficiary_account = ?
+      )
+    `;
+
     const params = [account, account];
-    if (from) { sql += ` AND transaction_date >= ?`; params.push(`${from} 00:00:00`); }
-    if (to) { sql += ` AND transaction_date <= ?`; params.push(`${to} 23:59:59`); }
-    sql += ` ORDER BY transaction_date DESC LIMIT 500`;
+
+    if (from) {
+      sql += ` AND t.transaction_date >= ?`;
+      params.push(`${from} 00:00:00`);
+    }
+
+    if (to) {
+      sql += ` AND t.transaction_date <= ?`;
+      params.push(`${to} 23:59:59`);
+    }
+
+    sql += ` ORDER BY t.transaction_date DESC LIMIT 500`;
+
     const [rows] = await pool.query(sql, params);
-    const [accounts] = await pool.query(`SELECT * FROM accounts WHERE account_number = ? LIMIT 1`, [account]);
-    res.json({ success: true, data: { account: accounts[0] || null, transactions: rows } });
-  } catch (e) { console.error(e); res.status(500).json({ success: false, message: 'Unable to load account statement.' }); }
+
+    const [accounts] = await pool.query(
+      `SELECT * FROM accounts WHERE account_number = ? LIMIT 1`,
+      [account]
+    );
+
+    res.json({
+      success: true,
+      data: {
+        account: accounts[0] || null,
+        transactions: rows
+      }
+    });
+
+  } catch (e) {
+    console.error(e);
+
+    res.status(500).json({
+      success: false,
+      message: 'Unable to load account statement.'
+    });
+  }
 };
+
 
 const listBeneficiaries = async (_req, res) => {
   try { const [rows] = await pool.query(`SELECT * FROM beneficiaries ORDER BY created_at DESC, id DESC`); res.json({ success: true, data: rows }); }
