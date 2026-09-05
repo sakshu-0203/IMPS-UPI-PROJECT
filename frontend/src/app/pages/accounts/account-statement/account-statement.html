@@ -1,155 +1,471 @@
 <div class="page-shell">
 
-  <h1>Account Statement</h1>
+  <!-- =========================================
+       PAGE TITLE
+  ========================================== -->
+
+  <h1>
+    Account Statement
+  </h1>
+
+
+  <!-- =========================================
+       SEARCH CARD
+  ========================================== -->
 
   <div class="search-card">
 
     <div class="form-row">
 
-      <!-- ACCOUNT NUMBER -->
+
+      <!-- =====================================
+           ACCOUNT NUMBER
+      ====================================== -->
+
       <div class="form-group account-field">
-        <label>Account Number *</label>
 
-        <input type="text" [(ngModel)]="accountNumber" placeholder="Enter account number" />
+        <label>
+          Account Number
+        </label>
+
+        <input
+          type="text"
+          [(ngModel)]="accountNumber"
+          placeholder="Enter account number"
+          maxlength="18"
+          autocomplete="off"
+        />
+
       </div>
 
 
-      <!-- FROM DATE -->
+      <!-- =====================================
+           FROM DATE
+      ====================================== -->
+
       <div class="form-group date-field">
-        <label>From Date</label>
 
-        <input type="date" [(ngModel)]="fromDate" />
+        <label>
+          From Date
+        </label>
+
+        <input
+          type="date"
+          [(ngModel)]="fromDate"
+        />
+
       </div>
 
 
-      <!-- TO DATE -->
+      <!-- =====================================
+           TO DATE
+      ====================================== -->
+
       <div class="form-group date-field">
-        <label>To Date</label>
 
-        <input type="date" [(ngModel)]="toDate" />
+        <label>
+          To Date
+        </label>
+
+        <input
+          type="date"
+          [(ngModel)]="toDate"
+        />
+
       </div>
 
 
-      <!-- SEARCH -->
+      <!-- =====================================
+           STATUS FILTER
+      ====================================== -->
+
+      <div class="form-group filter-field">
+
+        <label>
+          Status
+        </label>
+
+        <select
+          [(ngModel)]="status"
+        >
+
+          <option value="">
+            All Status
+          </option>
+
+          <option value="PENDING">
+            PENDING
+          </option>
+
+          <option value="SUCCESS">
+            SUCCESS
+          </option>
+
+          <option value="FAILED">
+            FAILED
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- =====================================
+           DIRECTION FILTER
+      ====================================== -->
+
+      <div class="form-group filter-field">
+
+        <label>
+          Direction
+        </label>
+
+        <select
+          [(ngModel)]="direction"
+        >
+
+          <!-- ALL -->
+
+          <option value="">
+            All Direction
+          </option>
+
+
+          <!-- INBOUND -->
+
+          <option value="INBOUND">
+            INBOUND
+          </option>
+
+
+          <!-- OUTBOUND -->
+
+          <option value="OUTBOUND">
+            OUTBOUND
+          </option>
+
+
+          <!-- INWARD -->
+
+          <option value="INWARD">
+            INWARD
+          </option>
+
+
+          <!-- OUTWARD -->
+
+          <option value="OUTWARD">
+            OUTWARD
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- =====================================
+           SEARCH BUTTON
+      ====================================== -->
+
       <div class="button-group">
 
-        <button type="button" class="btn-primary" (click)="search()" [disabled]="loading">
-          {{ loading ? 'Searching...' : 'Search' }}
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="search()"
+          [disabled]="loading"
+        >
+
+          {{
+            loading
+              ? 'Searching...'
+              : 'Search'
+          }}
+
         </button>
 
       </div>
 
 
-      <!-- CLEAR -->
+      <!-- =====================================
+           CLEAR BUTTON
+      ====================================== -->
+
       <div class="button-group">
 
-        <button type="button" class="btn-secondary" (click)="clear()">
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="clear()"
+        >
+
           Clear
+
         </button>
 
       </div>
 
 
-      <!-- DOWNLOAD -->
+      <!-- =====================================
+           DOWNLOAD BUTTON
+      ====================================== -->
+
       <div class="button-group">
 
-        <button type="button" class="btn-download" (click)="downloadStatement()">
+        <button
+          type="button"
+          class="btn-download"
+          (click)="downloadStatement()"
+          [disabled]="filteredRows.length === 0"
+        >
+
           ↓ Download Report
+
         </button>
 
       </div>
 
     </div>
 
+
+    <!-- =======================================
+         ERROR MESSAGE
+    ======================================== -->
+
+    <p
+      *ngIf="errorMessage"
+      class="error-message"
+    >
+
+      {{ errorMessage }}
+
+    </p>
+
   </div>
 
 
-  <!-- RESULT CARD -->
+
+  <!-- =========================================
+       RESULT CARD
+  ========================================== -->
 
   <div class="result-card">
 
+
+    <!-- =======================================
+         RECORD COUNT
+    ======================================== -->
+
     <h2>
-      Records: {{ rows.length }}
+      Records: {{ filteredRows.length }}
     </h2>
 
 
-    <p *ngIf="loading" class="loading-text">
+    <!-- =======================================
+         LOADING
+    ======================================== -->
+
+    <p
+      *ngIf="loading"
+      class="loading-text"
+    >
+
       Loading...
+
     </p>
 
 
-    <div class="table-wrapper" *ngIf="rows.length > 0">
+    <!-- =======================================
+         TABLE
+    ======================================== -->
+
+    <div
+      class="table-wrapper"
+      *ngIf="
+        !loading &&
+        filteredRows.length > 0
+      "
+    >
 
       <table>
+
+        <!-- ===================================
+             HEADER
+        ==================================== -->
 
         <thead>
 
           <tr>
 
-            <th>Transaction ID</th>
+            <th>
+              Transaction ID
+            </th>
 
-            <th>RRN</th>
+            <th>
+              RRN
+            </th>
 
-            <th>Direction</th>
+            <th>
+              Direction
+            </th>
 
-            <th>Sender</th>
+            <th>
+              Sender
+            </th>
 
-            <th>Beneficiary</th>
+            <th>
+              Beneficiary
+            </th>
 
-            <th>Amount</th>
+            <th>
+              Amount
+            </th>
 
-            <th>Status</th>
+            <th>
+              Status
+            </th>
 
-            <th>Date</th>
+            <th>
+              Date
+            </th>
 
           </tr>
 
         </thead>
 
 
+        <!-- ===================================
+             BODY
+        ==================================== -->
+
         <tbody>
 
-          <tr *ngFor="let r of rows">
+          <tr
+            *ngFor="
+              let r of filteredRows
+            "
+          >
+
+
+            <!-- TRANSACTION ID -->
 
             <td>
               {{ r.transaction_id }}
             </td>
 
 
+            <!-- RRN -->
+
             <td>
               {{ r.rrn }}
             </td>
 
 
+            <!-- DIRECTION -->
+
             <td>
-              {{ r.direction }}
+
+              <span
+                [class.inbound]="
+                  r.direction?.toUpperCase() === 'INBOUND'
+                "
+                [class.outbound]="
+                  r.direction?.toUpperCase() === 'OUTBOUND'
+                "
+                [class.inward]="
+                  r.direction?.toUpperCase() === 'INWARD'
+                "
+                [class.outward]="
+                  r.direction?.toUpperCase() === 'OUTWARD'
+                "
+              >
+
+                {{ r.direction }}
+
+              </span>
+
             </td>
+
+
+            <!-- SENDER -->
+
             <td>
+
               <div class="remitter">
-                <strong>{{ r.customer_name }}</strong>
-                <span>{{ r.sender_account }}</span>
+
+                <strong>
+                  {{ r.customer_name }}
+                </strong>
+
+                <span>
+                  {{ r.sender_account }}
+                </span>
+
               </div>
+
             </td>
 
+
+            <!-- BENEFICIARY -->
+
             <td>
+
               <div class="beneficiary-cell">
-                <strong>{{ r.beneficiary_name }}</strong>
-                <span>{{ r.beneficiary_account }}</span>
+
+                <strong>
+                  {{ r.beneficiary_name }}
+                </strong>
+
+                <span>
+                  {{ r.beneficiary_account }}
+                </span>
+
               </div>
+
             </td>
 
+
+            <!-- AMOUNT -->
+
             <td>
+
               ₹ {{ r.amount }}
+
             </td>
 
 
+            <!-- STATUS -->
+
             <td>
-              {{ r.transaction_status }}
+
+              <span
+                [class.status-success]="
+                  r.transaction_status?.toUpperCase() === 'SUCCESS'
+                "
+                [class.status-failed]="
+                  r.transaction_status?.toUpperCase() === 'FAILED'
+                "
+                [class.status-pending]="
+                  r.transaction_status?.toUpperCase() === 'PENDING'
+                "
+              >
+
+                {{ r.transaction_status }}
+
+              </span>
+
             </td>
 
 
+            <!-- DATE -->
+
             <td>
-              {{ r.transaction_date | date:'dd-MM-yyyy' }}
+
+              {{
+                r.transaction_date
+                  | date:'dd-MM-yyyy'
+              }}
+
             </td>
 
           </tr>
@@ -161,8 +477,20 @@
     </div>
 
 
-    <p *ngIf="!loading && rows.length === 0" class="empty-text">
+    <!-- =======================================
+         NO RECORDS
+    ======================================== -->
+
+    <p
+      *ngIf="
+        !loading &&
+        filteredRows.length === 0
+      "
+      class="empty-text"
+    >
+
       No records found.
+
     </p>
 
   </div>
