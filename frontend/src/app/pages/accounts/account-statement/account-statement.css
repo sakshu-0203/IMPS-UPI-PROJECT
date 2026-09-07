@@ -1,1 +1,700 @@
-.page-shell{width:100%}.search-card,.result-card{padding:16px;margin-bottom:16px}.form-row{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:12px}.form-group{display:flex;flex-direction:column;gap:6px}.form-group label{font-size:12px;font-weight:600}.form-group input{border:1px solid #d0d5dd;border-radius:7px;padding:10px}.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}@media(max-width:700px){.form-row{grid-template-columns:1fr}}
+/* =========================================
+   PAGE
+========================================= */
+
+.page-shell {
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px 32px;
+  box-sizing: border-box;
+  background: #f6f8fb;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =========================================
+   PAGE TITLE
+========================================= */
+
+.page-shell h1 {
+  margin: 0 0 20px 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #123b68;
+}
+
+
+/* =========================================
+   SEARCH CARD
+========================================= */
+
+.search-card {
+  background: #ffffff;
+  border: 1px solid #e1e7ef;
+  border-radius: 12px;
+  padding: 22px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
+}
+
+
+/* =========================================
+   FORM ROW
+========================================= */
+
+.form-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  width: 100%;
+}
+
+
+/* =========================================
+   FORM GROUP
+========================================= */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #344054;
+  min-height: 17px;
+}
+
+
+/* =========================================
+   ACCOUNT FIELD
+========================================= */
+
+.account-field {
+  width: 190px;
+}
+
+
+/* =========================================
+   DATE FIELD
+========================================= */
+
+.date-field {
+  width: 175px;
+}
+
+
+/* =========================================
+   FILTER FIELD
+========================================= */
+
+.filter-field {
+  width: 145px;
+}
+
+
+/* =========================================
+   INPUT + SELECT
+========================================= */
+
+.form-group input,
+.form-group select {
+  height: 40px;
+  width: 100%;
+  box-sizing: border-box;
+
+  border: 1px solid #cfd7e3;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  padding: 0 12px;
+
+  font-size: 14px;
+  color: #1d2939;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+
+/* INPUT */
+
+.form-group input::placeholder {
+  color: #98a2b3;
+}
+
+
+/* FOCUS */
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+/* HOVER */
+
+.form-group input:hover,
+.form-group select:hover {
+  border-color: #98a2b3;
+}
+
+
+/* =========================================
+   SELECT
+========================================= */
+
+.form-group select {
+  cursor: pointer;
+
+  appearance: auto;
+
+  background-color: #ffffff;
+}
+
+
+/* =========================================
+   BUTTON GROUP
+========================================= */
+
+.button-group {
+  display: flex;
+  align-items: flex-end;
+}
+
+
+/* =========================================
+   ALL BUTTONS
+========================================= */
+
+.button-group button {
+  height: 40px;
+  border-radius: 7px;
+  padding: 0 18px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.1s ease,
+    box-shadow 0.2s ease;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   SEARCH BUTTON
+========================================= */
+
+.btn-primary {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+
+  box-shadow: 0 2px 5px rgba(37, 99, 235, 0.18);
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   CLEAR BUTTON
+========================================= */
+
+.btn-secondary {
+  border: 1px solid #d0d5dd;
+  background: #ffffff;
+  color: #344054;
+}
+
+.btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #98a2b3;
+}
+
+
+/* =========================================
+   DOWNLOAD BUTTON
+========================================= */
+
+.btn-download {
+  border: 1px solid #66b894;
+  background: #048d4f;
+  color: #ffffff;
+
+  box-shadow: 0 2px 5px rgba(16, 185, 129, 0.12);
+}
+
+.btn-download:hover {
+  background: #5eae8b;
+  border-color: #5eae8b;
+}
+
+.btn-download:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   ERROR MESSAGE
+========================================= */
+
+.error-message {
+  margin-top: 12px;
+  padding: 10px 12px;
+
+  border-radius: 7px;
+
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+
+  color: #b42318;
+
+  font-size: 13px;
+}
+
+
+/* =========================================
+   RESULT CARD
+========================================= */
+
+.result-card {
+  background: #ffffff;
+
+  border: 1px solid #e1e7ef;
+  border-radius: 12px;
+
+  min-height: 160px;
+
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
+
+  overflow: hidden;
+}
+
+
+/* =========================================
+   RESULT HEADER
+========================================= */
+
+.result-card h2 {
+  margin: 0;
+
+  padding: 17px 20px;
+
+  border-bottom: 1px solid #e7ebf0;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  color: #123b68;
+}
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.loading-text {
+  padding: 35px 20px;
+
+  margin: 0;
+
+  text-align: center;
+
+  color: #667085;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   EMPTY
+========================================= */
+
+.empty-text {
+  margin: 0;
+
+  padding: 38px 20px;
+
+  text-align: center;
+
+  color: #667085;
+
+  font-size: 15px;
+}
+
+
+/* =========================================
+   TABLE WRAPPER
+========================================= */
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  min-width: 950px;
+
+  font-size: 13px;
+}
+
+
+/* =========================================
+   TABLE HEADER
+========================================= */
+
+thead {
+  background: #f8fafc;
+}
+
+thead th {
+  padding: 13px 14px;
+
+  text-align: left;
+
+  border-bottom: 1px solid #e4e7ec;
+
+  color: #475467;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   TABLE BODY
+========================================= */
+
+tbody td {
+  padding: 14px;
+
+  border-bottom: 1px solid #eef1f4;
+
+  color: #344054;
+
+  vertical-align: middle;
+}
+
+
+/* =========================================
+   ROW HOVER
+========================================= */
+
+tbody tr:hover {
+  background: #f8fbff;
+}
+
+
+/* =========================================
+   TRANSACTION ID
+========================================= */
+
+tbody td:first-child {
+  color: #175cd3;
+  font-weight: 500;
+}
+
+
+/* =========================================
+   REMITTER / BENEFICIARY
+========================================= */
+
+.remitter,
+.beneficiary-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.remitter strong,
+.beneficiary-cell strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d2939;
+}
+
+.remitter span,
+.beneficiary-cell span {
+  font-size: 12px;
+  color: #667085;
+}
+
+
+/* =========================================
+   AMOUNT
+========================================= */
+
+tbody td:nth-child(6) {
+  font-weight: 600;
+  color: #1d2939;
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   STATUS BADGES
+========================================= */
+
+.status-success,
+.status-failed,
+.status-pending {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 72px;
+
+  padding: 5px 10px;
+
+  border-radius: 20px;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+}
+
+
+/* SUCCESS */
+
+.status-success {
+  background: #ecfdf3;
+  color: #027a48;
+  border: 1px solid #abefc6;
+}
+
+
+/* FAILED */
+
+.status-failed {
+  background: #fef3f2;
+  color: #b42318;
+  border: 1px solid #fecdca;
+}
+
+
+/* PENDING */
+
+.status-pending {
+  background: #fffaeb;
+  color: #b54708;
+  border: 1px solid #fedf89;
+}
+
+
+/* =========================================
+   DIRECTION
+========================================= */
+
+.inbound,
+.outbound {
+  display: inline-flex;
+
+  padding: 5px 10px;
+
+  border-radius: 20px;
+
+  font-size: 11px;
+
+  font-weight: 600;
+}
+
+
+.inbound,
+.outbound,
+.inward,
+.outward {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 5px 10px;
+
+  border-radius: 20px;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+
+/* INBOUND */
+
+.inbound {
+  background: #eff8ff;
+  color: #175cd3;
+  border: 1px solid #b2ddff;
+}
+
+
+/* OUTBOUND */
+
+.outbound {
+  background: #f4f3ff;
+  color: #5925dc;
+  border: 1px solid #d9d6fe;
+}
+
+
+/* INWARD */
+
+.inward {
+  background: #ecfdf3;
+  color: #027a48;
+  border: 1px solid #abefc6;
+}
+
+
+/* OUTWARD */
+
+.outward {
+  background: #fff6ed;
+  color: #c4320a;
+  border: 1px solid #fddec7;
+}
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+.table-wrapper::-webkit-scrollbar {
+  height: 7px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: #f1f3f5;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1200px) {
+
+  .form-row {
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .account-field {
+    width: 200px;
+  }
+
+  .date-field {
+    width: 180px;
+  }
+
+  .filter-field {
+    width: 160px;
+  }
+
+}
+
+
+@media (max-width: 768px) {
+
+  .page-shell {
+    padding: 18px;
+  }
+
+  .page-shell h1 {
+    font-size: 24px;
+  }
+
+  .form-row {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 14px;
+  }
+
+  .account-field,
+  .date-field,
+  .filter-field {
+    width: 100%;
+  }
+
+  .button-group {
+    width: 100%;
+  }
+
+  .button-group button {
+    width: 100%;
+  }
+
+}
+
+
+@media (max-width: 500px) {
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label {
+  display: block;
+  width: 100%;
+
+  font-size: 13px;
+  font-weight: 600;
+  color: #344054;
+
+  white-space: nowrap;
+  line-height: 18px;
+}
