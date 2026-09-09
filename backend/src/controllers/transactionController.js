@@ -153,6 +153,13 @@ const createTransaction = async (req, res) => {
       ]
     );
 
+    await connection.query(
+      `INSERT INTO notifications (user_id, title, message, notification_type, is_read)
+       SELECT id, 'Pending approval', ?, 'TRANSACTION', 0
+       FROM users WHERE employee_id = ? LIMIT 1`,
+      [msg, initiatedBy]
+    );
+
     await connection.commit();
 
     res.status(201).json({
