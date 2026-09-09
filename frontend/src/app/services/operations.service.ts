@@ -109,6 +109,10 @@ export class OperationsService {
     return this.http.post<any>(`${this.apiUrl}/settings/users`, data);
   }
 
+  updateUser(id: any, data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/settings/users/${encodeURIComponent(id)}`, data);
+  }
+
   // =========================
   // ROLES
   // =========================
