@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class OperationsService {
   private readonly apiUrl = 'http://localhost:5000/api/operations';
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAccounts(accountNumber = ''): Observable<any> {
     let params = new HttpParams();
@@ -30,7 +30,24 @@ export class OperationsService {
   getSystemHealth() { return this.http.get<any>(`${this.apiUrl}/monitoring/system-health`); }
   getUsers() { return this.http.get<any>(`${this.apiUrl}/settings/users`); }
   createUser(data: any) { return this.http.post<any>(`${this.apiUrl}/settings/users`, data); }
-  getRoles() { return this.http.get<any>(`${this.apiUrl}/settings/roles`); }
+
+getRoles(): Observable<any> {
+  return this.http.get<any>(
+    `${this.apiUrl}/settings/roles`
+  );
+}
+
+
+// ADD THIS METHOD
+updateUser(id: any, data: any) {
+ 
+ return this.http.put<any>(
+    `${this.apiUrl}/settings/users/${encodeURIComponent(id)}`,
+    data
+  );
+}
+
+
   getSystemSettings() { return this.http.get<any>(`${this.apiUrl}/settings/system`); }
   saveSystemSetting(data: any) { return this.http.put<any>(`${this.apiUrl}/settings/system`, data); }
   uploadBulkFile(data: any) { return this.http.post<any>('http://localhost:5000/api/transactions/bulk-upload', data); }
